@@ -27,7 +27,7 @@ export default function Home() {
 
       <nav className="nav">
         <Link className="logo-lockup" href="/" aria-label="ONYX Tattoo Studio">
-          <span className="logo-onyx">ONYX</span><small>TATTOO STUDIO</small>
+          <span className="brand-symbol" aria-hidden="true">✦</span><span className="logo-onyx">ONYX</span><small>TATTOO STUDIO</small>
         </Link>
         <div className="navlinks">
           <Link href="#work">WORK</Link><Link href="#process">PROCESS</Link><Link href="#styles">STYLES</Link><Link href="#studio">STUDIO</Link>
@@ -38,6 +38,7 @@ export default function Home() {
       <section className="hero">
         <div className="hero-photo"><div className="hero-photo-inner" /></div>
         <div className="hero-light" /><div className="hero-vignette" /><div className="hero-grid-lines" />
+        <div className="hero-brand" aria-label="ONYX Tattoo Studio"><span>✦</span><strong>ONYX</strong><small>TATTOO STUDIO</small></div>
         <div className="hero-copy">
           <div className="eyebrow hero-eyebrow">INDORE / INDIA — APPOINTMENT ONLY</div>
           <div className="hero-title-stack">
@@ -168,7 +169,7 @@ export default function Home() {
         <Link href="/booking" className="book-button magnetic">BOOK A SESSION <span>↗</span></Link><p>INK. ART. IDENTITY.</p>
       </section>
 
-      <footer className="footer"><div className="logo">ONYX<span>®</span></div><div>INDORE · MADHYA PRADESH · INDIA</div><div>© 2026 ONYX TATTOO STUDIO</div></footer>
+      <footer className="footer"><div className="footer-brand"><span className="footer-mark">✦</span><div className="logo">ONYX<span>®</span></div><small>TATTOO STUDIO</small></div><div>INDORE · MADHYA PRADESH · INDIA</div><div>© 2026 ONYX TATTOO STUDIO</div></footer>
     </main>
   );
 }
