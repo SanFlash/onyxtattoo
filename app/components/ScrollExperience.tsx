@@ -140,8 +140,6 @@ export default function ScrollExperience() {
           start: "top top",
           end: "bottom bottom",
           scrub: 1,
-          pin: ".process-intro",
-          pinSpacing: false,
         },
       });
 
