@@ -1,53 +1,133 @@
 import Link from "next/link";
 import ScrollExperience from "./components/ScrollExperience";
 
-const imageWork = [
-  { title: "THE CRAFT", meta: "Precision / Process / Detail", image: "https://images.unsplash.com/photo-1753259789341-808371092e19?auto=format&fit=crop&fm=jpg&q=85&w=1800" },
-  { title: "THE MARK", meta: "Custom / Black & Grey / Identity", image: "https://images.unsplash.com/photo-1775135332562-9ff99e65a616?auto=format&fit=crop&fm=jpg&q=85&w=1800" },
-  { title: "THE SESSION", meta: "Consultation / Composition / Skin", image: "https://images.unsplash.com/photo-1679621550970-32d6587b62c4?auto=format&fit=crop&fm=jpg&q=85&w=1800" },
-  { title: "THE STUDIO", meta: "Atmosphere / Hygiene / Focus", image: "https://images.unsplash.com/photo-1780901090185-0a22ff65ac58?auto=format&fit=crop&fm=jpg&q=85&w=1800" },
+const gallery = [
+  { no: "01", title: "BLACK / GREY", tag: "REALISM", image: "https://images.unsplash.com/photo-1753259789341-808371092e19?auto=format&fit=crop&fm=jpg&q=88&w=1800" },
+  { no: "02", title: "THE LINE", tag: "FINE LINE", image: "https://images.unsplash.com/photo-1679621550970-32d6587b62c4?auto=format&fit=crop&fm=jpg&q=88&w=1800" },
+  { no: "03", title: "DARK FLORAL", tag: "BLACKWORK", image: "https://images.unsplash.com/photo-1775135332562-9ff99e65a616?auto=format&fit=crop&fm=jpg&q=88&w=1800" },
 ];
 
-const styles = ["REALISM", "BLACK & GREY", "FINE LINE", "TRADITIONAL", "NEO TRADITIONAL", "GEOMETRIC"];
+const styles = ["REALISM", "BLACK & GREY", "FINE LINE", "BLACKWORK", "NEO TRADITIONAL", "GEOMETRIC"];
 
 export default function Home() {
-  return <main className="onyx-shell">
-    <ScrollExperience />
-    <nav className="nav">
-      <Link className="logo-lockup" href="/" aria-label="ONYX Tattoo Studio"><img src="/brand/onyx-logo.png" alt="ONYX Tattoo Studio" /></Link>
-      <div className="navlinks"><Link href="#work">WORK</Link><Link href="#artists">ARTISTS</Link><Link href="#studio">STUDIO</Link><Link href="#services">SERVICES</Link></div>
-      <Link className="navcta" href="/booking">BOOK A SESSION <span>↗</span></Link>
-    </nav>
+  return (
+    <main className="onyx-shell">
+      <ScrollExperience />
 
-    <section className="hero">
-      <div className="hero-visual-wrap"><div className="hero-visual" /><div className="hero-overlay" /><div className="hero-grain" /></div>
-      <div className="hero-inner">
-        <div className="hero-topline"><span>INDORE · MADHYA PRADESH · INDIA</span><span>EST. 2026 / CUSTOM TATTOO STUDIO</span></div>
-        <h1 className="hero-title"><span className="word">INK.</span><span className="word serif">ART.</span><span className="word">IDENTITY.</span></h1>
-        <div className="hero-bottom"><p>WE CREATE TATTOOS WITH THE WEIGHT OF ART AND THE INTENTION OF SOMETHING MADE TO LAST.</p><a href="#work" className="scroll-cue"><span>SCROLL TO EXPLORE</span><i>↓</i></a></div>
-      </div>
-    </section>
+      <div className="scroll-progress"><span /></div>
 
-    <section className="manifesto mood-section velocity-skew">
-      <div className="section-label">01 / THE IDEA</div><div className="floating-mark">✦</div>
-      <div className="manifesto-grid"><p className="statement reveal">EVERY MARK <em>TELLS</em> A STORY.</p><div className="manifesto-copy reveal"><span className="red-dot" /><p>ONYX is a consultation-led tattoo studio for people who want more than a design. We build a visual language around your story, placement, skin and the way you want the piece to live for years.</p><Link href="/booking">START WITH A CONSULTATION ↗</Link></div></div>
-    </section>
+      <nav className="nav nav-editorial">
+        <Link className="logo-lockup" href="/" aria-label="ONYX Tattoo Studio">
+          <img src="/brand/onyx-logo.png" alt="ONYX Tattoo Studio" />
+        </Link>
+        <div className="navlinks"><Link href="#gallery">WORK</Link><Link href="#process">PROCESS</Link><Link href="#styles">STYLES</Link><Link href="#studio">STUDIO</Link></div>
+        <Link className="navcta" href="/booking">BOOK <span>↗</span></Link>
+      </nav>
 
-    <section id="work" className="work-section mood-section velocity-skew">
-      <div className="section-head reveal"><div><div className="section-label">02 / SELECTED WORK</div><h2 className="drift">MADE <em>ON</em> SKIN.</h2></div><span className="work-count">04 / 04</span></div>
-      <div className="work-masonry">{imageWork.slice(0, 3).map((item, i) => <article className={["work-card","reveal","work-card-" + (i + 1)].join(" ")} key={item.title}><div className="image-frame"><img src={item.image} alt={item.title} loading={i === 0 ? "eager" : "lazy"} /><span className="image-index">0{i + 1}</span></div><div className="work-meta"><h3>{item.title}</h3><p>{item.meta}</p></div></article>)}</div>
-    </section>
+      <section className="hero hero-gallery">
+        <div className="hero-brand-art" aria-hidden="true" />
+        <div className="hero-photo"><div className="hero-photo-inner" /></div>
+        <div className="hero-vignette" />
+        <div className="hero-copy">
+          <div className="eyebrow">INDORE · INDIA / APPOINTMENT ONLY</div>
+          <div className="hero-title-stack">
+            <div className="hero-line mask-line"><span>INK.</span></div>
+            <div className="hero-line mask-line serif-line"><span>ART.</span></div>
+            <div className="hero-line mask-line"><span>IDENTITY.</span></div>
+          </div>
+          <div className="hero-meta">
+            <p>A PRIVATE TATTOO STUDIO WHERE PERSONAL STORIES BECOME PERMANENT VISUAL LANGUAGE.</p>
+            <a href="#gallery" className="hero-scroll">ENTER THE GALLERY <b>↓</b></a>
+          </div>
+        </div>
+        <div className="hero-index">001 <span>/</span> 007</div>
+      </section>
 
-    <section className="horizontal-section" aria-label="ONYX process"><svg className="ink-line" viewBox="0 0 1200 180" aria-hidden="true"><path className="ink-path" d="M10 120 C180 10 300 170 470 82 S760 18 920 104 S1080 170 1190 45" /></svg><div className="horizontal-track"><div className="horizontal-intro horizontal-panel"><div className="section-label">03 / THE PROCESS</div><h2>FROM <em>IDEA</em><br />TO INK.</h2><p>Scroll through the ONYX experience.</p></div>{["01 / CONSULT","02 / DESIGN","03 / SESSION","04 / AFTERCARE"].map((step, i) => <article className="process-panel horizontal-panel" key={step}><div className="process-number">{String(i + 1).padStart(2, "0")}</div><div><span>{step}</span><h3>{["UNDERSTAND THE STORY.","BUILD THE COMPOSITION.","MAKE THE MARK.","KEEP IT BEAUTIFUL."][i]}</h3></div><div className="process-line" /></article>)}</div></section>
+      <section className="intro-panel">
+        <div className="section-number">01</div>
+        <div className="intro-copy reveal-up">
+          <span className="eyebrow">THE ONYX APPROACH</span>
+          <h2>NOT JUST A<br /><em>TATTOO.</em></h2>
+          <p>Every piece begins with conversation. We study the idea, the placement, the anatomy and the visual weight before a needle touches skin.</p>
+          <Link href="/booking" className="text-link">START A CONSULTATION <span>↗</span></Link>
+        </div>
+        <div className="intro-symbol" aria-hidden="true">✦</div>
+      </section>
 
-    <section id="artists" className="artists-section mood-section velocity-skew"><div className="section-label">04 / THE ARTISTS</div><div className="artist-feature"><div className="artist-photo reveal"><img src={imageWork[3].image} alt="Tattoo studio session" loading="lazy" /><div className="artist-stamp ink-orbit">ONYX · ONYX · ONYX · </div></div><div className="artist-copy reveal"><span>THE HAND BEHIND THE INK</span><h2>CRAFT<br /><em>WITH</em><br />INTENT.</h2><p>Artist profiles, specialties, availability and portfolios are designed to connect directly with the booking and CMS system as ONYX grows.</p><Link href="#services" className="btn">EXPLORE SPECIALTIES ↗</Link></div></div></section>
+      <section id="gallery" className="gallery-wall">
+        <div className="wall-header">
+          <div><span className="eyebrow">02 / SELECTED WORK</span><h2>THE <em>INK</em> WALL</h2></div>
+          <p>SCROLL / DRAG / EXPLORE</p>
+        </div>
+        <div className="gallery-stack">
+          {gallery.map((item, i) => (
+            <article className={"gallery-card gallery-card-" + (i + 1)} key={item.no}>
+              <div className="gallery-image">
+                <img src={item.image} alt={item.title} loading={i ? "lazy" : "eager"} />
+                <div className="image-shade" />
+                <span className="gallery-no">{item.no}</span>
+                <span className="gallery-tag">{item.tag}</span>
+              </div>
+              <div className="gallery-caption"><h3>{item.title}</h3><span>ONYX / 2026</span></div>
+            </article>
+          ))}
+        </div>
+      </section>
 
-    <section id="services" className="styles-section"><div className="section-label">05 / SIGNATURE STYLES</div><div className="styles-list">{styles.map((style, i) => <div className="style-row reveal" key={style}><span>0{i + 1}</span><h3>{style}</h3><b>↗</b></div>)}</div></section>
+      <section id="process" className="process-stage">
+        <div className="process-sticky">
+          <div className="process-intro">
+            <span className="eyebrow">03 / THE PROCESS</span>
+            <h2>THE<br /><em>RITUAL</em><br />OF INK.</h2>
+            <div className="process-meter"><span /></div>
+          </div>
+          <div className="process-scenes">
+            {[
+              ["01", "CONVERSATION", "Find the story before finding the shape."],
+              ["02", "COMPOSITION", "Build a design around your body, not a template."],
+              ["03", "THE SESSION", "Controlled craft. Clean process. Total focus."],
+              ["04", "AFTERCARE", "Protect the work so the artwork ages beautifully."]
+            ].map(([no, title, copy]) => (
+              <article className="process-scene" key={no}>
+                <div className="scene-number">{no}</div>
+                <div className="scene-copy"><span>{title}</span><h3>{copy}</h3></div>
+                <div className="scene-circle">ONYX</div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
 
-    <section id="studio" className="studio-section mood-section velocity-skew"><div className="studio-image reveal"><img className="parallax" src={imageWork[2].image} alt="Tattoo session in a professional studio" loading="lazy" /></div><div className="studio-copy reveal"><div className="section-label">06 / THE STUDIO</div><h2>A SPACE<br />BUILT FOR<br /><em>PERMANENCE.</em></h2><p>Near Mr. DIY, Shreenagar Extension, Khajrana Road, Jhad Colony, Indore — 452018.</p><div className="studio-facts"><span>HYGIENE FIRST</span><span>PRIVATE CONSULTATIONS</span><span>APPOINTMENT LED</span></div></div></section>
+      <section id="styles" className="style-index">
+        <div className="style-index-head"><span className="eyebrow">04 / SIGNATURE LANGUAGE</span><p>CHOOSE THE FEELING. WE BUILD THE PIECE.</p></div>
+        <div className="style-list">
+          {styles.map((style, i) => <Link href="/booking" className="style-item" key={style}><span>0{i + 1}</span><h3>{style}</h3><i>↗</i></Link>)}
+        </div>
+      </section>
 
-    <section className="cta-section mood-section velocity-skew"><div className="cta-orb" /><div className="section-label">07 / MAKE IT PERMANENT</div><h2 className="drift">READY TO <em>MAKE</em><br />YOUR MARK?</h2><Link href="/booking" className="btn primary large">BOOK YOUR SESSION ↗</Link></section>
+      <section id="studio" className="studio-editorial">
+        <div className="studio-art"><div className="studio-photo" /><div className="studio-art-label">INDORE / MP / 452018</div></div>
+        <div className="studio-copy">
+          <span className="eyebrow">05 / THE STUDIO</span>
+          <h2>QUIET<br /><em>SPACE.</em><br />LOUD<br />ART.</h2>
+          <p>Near Mr. DIY, Shreenagar Extension, Khajrana Road, Jhad Colony, Indore — 452018.</p>
+          <div className="studio-tags"><span>HYGIENE FIRST</span><span>PRIVATE SESSIONS</span><span>CONSULTATION LED</span></div>
+        </div>
+      </section>
 
-    <footer className="footer" id="contact"><div><div className="logo">ONYX<span>®</span></div><p>INK. ART. IDENTITY.</p></div><div><p>INDORE, MADHYA PRADESH</p><p>NEAR MR. DIY · KHAJRANA ROAD</p></div><div><p>© 2026 ONYX TATTOO STUDIO</p><p>ALL MARKS RESERVED.</p></div></footer>
-  </main>;
+      <section className="final-mark">
+        <div className="final-ring" />
+        <span className="eyebrow">06 / YOUR TURN</span>
+        <h2>MAKE YOUR<br /><em>MARK.</em></h2>
+        <Link href="/booking" className="book-button">BOOK A SESSION <span>↗</span></Link>
+        <p>INK. ART. IDENTITY.</p>
+      </section>
+
+      <footer className="footer footer-editorial">
+        <div className="logo">ONYX<span>®</span></div>
+        <div>INDORE · MADHYA PRADESH · INDIA</div>
+        <div>© 2026 ONYX TATTOO STUDIO</div>
+      </footer>
+    </main>
+  );
 }
