@@ -19,34 +19,35 @@ export default function ScrollExperience() {
     let lenis: Lenis | null = null;
     let raf: ((time: number) => void) | null = null;
     let tickerScroll: ((event: { velocity?: number }) => void) | null = null;
-    let navScroll: ((event: { scroll: number }) => void) | null = null;
+    let navScroll: ((event?: { scroll: number }) => void) | null = null;
+    const isMobile = window.matchMedia("(max-width: 800px)").matches || window.matchMedia("(pointer: coarse)").matches;
 
     try {
-      // One clock for Lenis + GSAP + ScrollTrigger.
-      lenis = new Lenis({
-        lerp: 0.085,
-        smoothWheel: true,
-        syncTouch: window.matchMedia("(pointer: coarse)").matches,
-        syncTouchLerp: 0.075,
-        wheelMultiplier: 0.9,
-        touchMultiplier: window.matchMedia("(pointer: coarse)").matches ? 1.15 : 1,
-        anchors: true,
-        allowNestedScroll: true,
-      });
+      // Mobile uses the browser's native touch scroll so ScrollTrigger receives
+      // every finger-scroll update reliably. Lenis is reserved for desktop,
+      // where it smooths wheel scrolling without interfering with touch input.
+      if (!isMobile) {
+        lenis = new Lenis({
+          lerp: 0.085,
+          smoothWheel: true,
+          anchors: true,
+          allowNestedScroll: true,
+        });
 
-      const activeLenis = lenis;
+        const activeLenis = lenis;
 
-      raf = (time: number) => {
-        try {
-          activeLenis.raf(time * 1000);
-        } catch {
-          // Keep the page usable if a browser has an unexpected Lenis runtime issue.
-        }
-      };
+        raf = (time: number) => {
+          try {
+            activeLenis.raf(time * 1000);
+          } catch {
+            // Keep the page usable if a browser has an unexpected Lenis runtime issue.
+          }
+        };
 
-      activeLenis.on("scroll", ScrollTrigger.update);
-      gsap.ticker.add(raf);
-      gsap.ticker.lagSmoothing(0);
+        activeLenis.on("scroll", ScrollTrigger.update);
+        gsap.ticker.add(raf);
+        gsap.ticker.lagSmoothing(0);
+      }
 
       const ctx = gsap.context(() => {
         const mm = gsap.matchMedia();
@@ -61,8 +62,8 @@ export default function ScrollExperience() {
           .from(".hero-orbit", { scale: 0.5, opacity: 0, duration: 1.2, stagger: 0.15 }, "-=1");
 
         let lastScroll = 0;
-        navScroll = (event: { scroll: number }) => {
-          const current = event.scroll;
+        navScroll = (event?: { scroll: number }) => {
+          const current = event?.scroll ?? window.scrollY;
           if (Math.abs(current - lastScroll) < 2) return;
           gsap.to(".nav", {
             y: current > lastScroll && current > 90 ? -90 : 0,
@@ -72,7 +73,12 @@ export default function ScrollExperience() {
           });
           lastScroll = current;
         };
-        activeLenis.on("scroll", navScroll);
+
+        if (lenis) {
+          lenis.on("scroll", navScroll);
+        } else {
+          window.addEventListener("scroll", navScroll, { passive: true });
+        }
 
         const ticker = document.querySelector<HTMLElement>(".marquee-track");
         if (ticker) {
@@ -81,8 +87,17 @@ export default function ScrollExperience() {
             const velocity = Math.max(-1, Math.min(1, (event.velocity || 0) / 2));
             tickerX(velocity * -90);
           };
-          activeLenis.on("scroll", tickerScroll);
-          gsap.to(ticker, { xPercent: -28, duration: 22, repeat: -1, ease: "none" });
+          if (lenis) {
+            lenis.on("scroll", tickerScroll);
+          } else {
+            // Native mobile scroll does not expose Lenis velocity; the marquee
+            // still has its continuous motion and the rest of the page remains
+            // fully scroll-linked through ScrollTrigger.
+            gsap.to(ticker, { xPercent: -28, duration: 22, repeat: -1, ease: "none" });
+          }
+          if (lenis) {
+            gsap.to(ticker, { xPercent: -28, duration: 22, repeat: -1, ease: "none" });
+          }
         }
 
         mm.add("(min-width: 801px)", () => {
@@ -387,7 +402,7 @@ export default function ScrollExperience() {
         const refresh = () => {
           try {
             ScrollTrigger.refresh();
-            activeLenis.resize();
+            if (lenis) lenis.resize();
           } catch {
             // Animation failure must never break the rendered page.
           }
@@ -416,7 +431,11 @@ export default function ScrollExperience() {
     return () => {
       if (lenis) {
         try {
-          if (navScroll) lenis.off("scroll", navScroll);
+          if (navScroll) {
+            lenis.off("scroll", navScroll);
+          } else {
+            window.removeEventListener("scroll", navScroll);
+          }
           if (tickerScroll) lenis.off("scroll", tickerScroll);
           lenis.off("scroll", ScrollTrigger.update);
           lenis.destroy();
