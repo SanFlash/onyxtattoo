@@ -7,6 +7,8 @@ import Lenis from "lenis";
 
 gsap.registerPlugin(ScrollTrigger);
 
+ScrollTrigger.config({ ignoreMobileResize: true });
+
 export default function ScrollExperience() {
   useLayoutEffect(() => {
     if (typeof window === "undefined") return;
@@ -24,9 +26,10 @@ export default function ScrollExperience() {
       lenis = new Lenis({
         lerp: 0.085,
         smoothWheel: true,
-        syncTouch: false,
+        syncTouch: window.matchMedia("(pointer: coarse)").matches,
+        syncTouchLerp: 0.075,
         wheelMultiplier: 0.9,
-        touchMultiplier: 1,
+        touchMultiplier: window.matchMedia("(pointer: coarse)").matches ? 1.15 : 1,
         anchors: true,
         allowNestedScroll: true,
       });
@@ -278,6 +281,69 @@ export default function ScrollExperience() {
         });
 
         mm.add("(max-width: 800px)", () => {
+          // Mobile keeps native touch scrolling while Lenis syncTouch adds smooth inertia.
+          // These scrubbed effects are intentionally lighter than desktop choreography.
+          gsap.to(".hero-photo-inner", {
+            scale: 1.08, yPercent: -5, ease: "none",
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.2 },
+          });
+          gsap.to(".hero-copy", {
+            yPercent: -7, ease: "none",
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 },
+          });
+          gsap.to(".quote-word", {
+            xPercent: -8, ease: "none",
+            scrollTrigger: { trigger: ".quote-stage", start: "top bottom", end: "bottom top", scrub: 1.4 },
+          });
+          gsap.to(".manifesto-image img, .detail-image img, .studio-frame img", {
+            yPercent: -7, scale: 1.06, ease: "none",
+            scrollTrigger: { trigger: ".manifesto", start: "top bottom", end: "bottom top", scrub: 1.4 },
+          });
+          gsap.to(".depth-one", {
+            yPercent: -10, rotation: -2, ease: "none",
+            scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.5 },
+          });
+          gsap.to(".depth-two", {
+            yPercent: 7, rotation: 2, ease: "none",
+            scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.2 },
+          });
+
+          // Mobile process choreography: swipe/scroll drives the scene transitions.
+          const mobileScenes = gsap.utils.toArray<HTMLElement>(".process-scene");
+          if (mobileScenes.length > 1) {
+            const mobileProcess = gsap.timeline({
+              scrollTrigger: {
+                trigger: ".process-stage",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 0.9,
+              },
+            });
+            mobileScenes.forEach((scene, i) => {
+              if (i === 0) {
+                mobileProcess.to(scene, { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: "none" });
+              }
+              if (i < mobileScenes.length - 1) {
+                mobileProcess.to(scene, {
+                  opacity: 0, y: -22, scale: 0.96,
+                  clipPath: "inset(0 0 12% 0)",
+                  duration: 0.45, ease: "power2.inOut",
+                });
+                mobileProcess.fromTo(
+                  mobileScenes[i + 1],
+                  { opacity: 0, y: 28, scale: 1.04, clipPath: "inset(12% 0 0 0)" },
+                  { opacity: 1, y: 0, scale: 1, clipPath: "inset(0 0 0 0)", duration: 0.55, ease: "power2.out" },
+                  "<"
+                );
+              }
+              mobileProcess.to(
+                ".process-progress span",
+                { scaleX: (i + 1) / mobileScenes.length, duration: 0.35, ease: "none" },
+                "<"
+              );
+            });
+          }
+
           gsap.utils.toArray<HTMLElement>(".manifesto-image, .manifesto-copy, .quote-center, .detail-card, .depth-copy, .studio-copy").forEach((el) => {
             gsap.from(el, {
               y: 45, opacity: 0, duration: 0.8, ease: "power3.out",
