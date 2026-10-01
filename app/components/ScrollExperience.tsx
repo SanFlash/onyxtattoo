@@ -22,6 +22,7 @@ export default function ScrollExperience() {
 
     const raf = (time: number) => lenis.raf(time * 1000);
     const update = () => ScrollTrigger.update();
+    let onLenisScroll: ((event: { scroll: number }) => void) | undefined;
 
     lenis.on("scroll", update);
     gsap.ticker.add(raf);
@@ -41,7 +42,7 @@ export default function ScrollExperience() {
 
       // Hide/show navigation according to scroll direction.
       let lastScroll = 0;
-      const onLenisScroll = (event: { scroll: number }) => {
+      onLenisScroll = (event: { scroll: number }) => {
         const current = event.scroll;
         if (Math.abs(current - lastScroll) < 2) return;
         gsap.to(".nav", {
@@ -52,7 +53,7 @@ export default function ScrollExperience() {
         });
         lastScroll = current;
       };
-      lenis.on("scroll", onLenisScroll);
+      if (onLenisScroll) lenis.on("scroll", onLenisScroll);
 
       // Horizontal ticker reacts to scroll velocity.
       const ticker = document.querySelector<HTMLElement>(".marquee-track");
@@ -338,7 +339,7 @@ export default function ScrollExperience() {
     return () => {
       ctx.revert();
       lenis.off("scroll", update);
-      lenis.off("scroll", onLenisScroll);
+      if (onLenisScroll) lenis.off("scroll", onLenisScroll);
       lenis.destroy();
       gsap.ticker.remove(raf);
     };
