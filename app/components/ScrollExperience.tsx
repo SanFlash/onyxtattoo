@@ -19,7 +19,7 @@ export default function ScrollExperience() {
     let lenis: Lenis | null = null;
     let raf: ((time: number) => void) | null = null;
     let tickerScroll: ((event: { velocity?: number }) => void) | null = null;
-    let navScroll: ((event?: { scroll: number }) => void) | null = null;
+    let navScroll: ((event?: { scroll: number } | Event) => void) | null = null;
     const isMobile = window.matchMedia("(max-width: 800px)").matches || window.matchMedia("(pointer: coarse)").matches;
 
     try {
@@ -63,7 +63,7 @@ export default function ScrollExperience() {
 
         let lastScroll = 0;
         navScroll = (event?: { scroll: number }) => {
-          const current = event?.scroll ?? window.scrollY;
+          const current = event && "scroll" in event ? event.scroll : window.scrollY;
           if (Math.abs(current - lastScroll) < 2) return;
           gsap.to(".nav", {
             y: current > lastScroll && current > 90 ? -90 : 0,
