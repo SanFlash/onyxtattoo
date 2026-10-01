@@ -13,232 +13,267 @@ export default function ScrollExperience() {
     if (reduce) return;
 
     const lenis = new Lenis({
-      lerp: 0.065,
+      lerp: 0.085,
       smoothWheel: true,
-      syncTouch: true,
+      syncTouch: false,
     });
 
+    let frame = 0;
+    const raf = (time: number) => {
+      lenis.raf(time * 1000);
+      ScrollTrigger.update();
+    };
+
+    gsap.ticker.add(raf);
+    gsap.ticker.lagSmoothing(0);
+
     const ctx = gsap.context(() => {
-      const tick = (time: number) => {
-        lenis.raf(time * 1000);
-        ScrollTrigger.update();
-      };
+      const mm = gsap.matchMedia();
 
-      gsap.ticker.add(tick);
-      gsap.ticker.lagSmoothing(0);
+      mm.add("(min-width: 801px)", () => {
+        // Hero: one continuous depth movement.
+        gsap.from(".hero-line span", {
+          yPercent: 105,
+          opacity: 0,
+          duration: 1.25,
+          stagger: 0.1,
+          ease: "expo.out",
+        });
 
-      // 01 — masked cinematic hero entrance
-      gsap.from(".hero-line span", {
-        yPercent: 115,
-        rotateX: -45,
-        opacity: 0,
-        duration: 1.5,
-        stagger: 0.14,
-        ease: "expo.out",
-        delay: 0.15,
-      });
+        gsap.to(".hero-photo-inner", {
+          scale: 1.12,
+          yPercent: -6,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero",
+            start: "top top",
+            end: "bottom top",
+            scrub: 1.5,
+          },
+        });
 
-      gsap.from(".hero-copy .eyebrow, .hero-meta, .hero-index", {
-        y: 25,
-        opacity: 0,
-        duration: 1.1,
-        stagger: 0.08,
-        ease: "power3.out",
-        delay: 0.7,
-      });
+        gsap.to(".hero-brand-art", {
+          yPercent: -18,
+          rotation: 5,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero",
+            start: "top top",
+            end: "bottom top",
+            scrub: 1.8,
+          },
+        });
 
-      // 02 — cinematic hero zoom + horizontal drift
-      gsap.to(".hero-photo-inner", {
-        scale: 1.18,
-        xPercent: 5,
-        yPercent: -7,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".hero",
-          start: "top top",
-          end: "bottom top",
-          scrub: 1.4,
-        },
-      });
+        // Intro: slow opposing depth.
+        gsap.from(".intro-copy", {
+          y: 80,
+          opacity: 0,
+          scrollTrigger: {
+            trigger: ".intro-panel",
+            start: "top 78%",
+            end: "top 30%",
+            scrub: 1,
+          },
+        });
 
-      gsap.to(".hero-brand-art", {
-        yPercent: -28,
-        rotation: 9,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".hero",
-          start: "top top",
-          end: "bottom top",
-          scrub: 1.8,
-        },
-      });
+        gsap.to(".intro-symbol", {
+          yPercent: -25,
+          rotation: 12,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".intro-panel",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.5,
+          },
+        });
 
-      // 03 — introduction depth
-      gsap.from(".intro-copy", {
-        y: 100,
-        opacity: 0,
-        scrollTrigger: {
-          trigger: ".intro-panel",
-          start: "top 70%",
-          end: "top 25%",
-          scrub: 1,
-        },
-      });
+        // Gallery: cards enter softly and images breathe independently.
+        gsap.utils.toArray<HTMLElement>(".gallery-card").forEach((card, index) => {
+          const image = card.querySelector("img");
 
-      gsap.to(".intro-symbol", {
-        yPercent: -35,
-        rotation: 20,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".intro-panel",
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.5,
-        },
-      });
+          gsap.fromTo(card,
+            { y: 55, opacity: 0, rotate: index === 1 ? 2 : -1 },
+            {
+              y: index === 1 ? -12 : 0,
+              opacity: 1,
+              rotate: 0,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 88%",
+                end: "top 48%",
+                scrub: 1,
+              },
+            }
+          );
 
-      // 04 — stacked gallery cards behave like physical prints
-      gsap.utils.toArray<HTMLElement>(".gallery-card").forEach((card, i) => {
-        const image = card.querySelector("img");
+          if (image) {
+            gsap.to(image, {
+              yPercent: -8,
+              scale: 1.06,
+              ease: "none",
+              scrollTrigger: {
+                trigger: card,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 1.5,
+              },
+            });
+          }
+        });
 
-        gsap.fromTo(card,
-          { y: 100 + i * 35, rotation: i === 1 ? 3 : -2, opacity: 0 },
-          {
-            y: i === 1 ? -30 : 0,
-            rotation: i === 1 ? -1 : 0,
+        // Process: sticky layout; only opacity/scale/clip change, avoiding competing pinning.
+        const scenes = gsap.utils.toArray<HTMLElement>(".process-scene");
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".process-stage",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 1.1,
+          },
+        });
+
+        scenes.forEach((scene, i) => {
+          timeline.to(scene, {
             opacity: 1,
+            y: 0,
+            scale: 1,
+            clipPath: "inset(0 0 0 0)",
+            duration: i === 0 ? 0.15 : 0.75,
+            ease: "power2.out",
+          });
+
+          timeline.to(".process-meter span", {
+            scaleX: (i + 1) / scenes.length,
+            duration: 0.55,
+            ease: "none",
+          }, "<");
+
+          if (i < scenes.length - 1) {
+            timeline.to(scene, {
+              opacity: 0,
+              y: -18,
+              scale: 0.97,
+              clipPath: "inset(0 0 0 12%)",
+              duration: 0.7,
+              ease: "power2.inOut",
+            });
+          }
+        });
+
+        // Studio: long, gentle image movement.
+        gsap.to(".studio-photo", {
+          yPercent: -7,
+          scale: 1.06,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".studio-editorial",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.8,
+          },
+        });
+
+        // Final seal rotates only while visible.
+        gsap.to(".final-ring", {
+          rotation: 180,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".final-mark",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.5,
+          },
+        });
+      });
+
+      mm.add("(max-width: 800px)", () => {
+        // Mobile intentionally uses fewer transforms for stable 60fps scrolling.
+        gsap.from(".hero-line span", {
+          yPercent: 80,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.08,
+          ease: "power3.out",
+        });
+
+        gsap.utils.toArray<HTMLElement>(".gallery-card, .intro-copy, .studio-copy").forEach((el) => {
+          gsap.from(el, {
+            y: 45,
+            opacity: 0,
+            duration: 0.8,
             ease: "power3.out",
             scrollTrigger: {
-              trigger: card,
+              trigger: el,
               start: "top 88%",
-              end: "top 38%",
-              scrub: 1,
-            },
-          }
-        );
-
-        if (image) {
-          gsap.to(image, {
-            yPercent: -12,
-            scale: 1.1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: card,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1.2,
+              once: true,
             },
           });
-        }
-      });
+        });
 
-      // 05 — pinned process stage, one scene replaces another
-      const processScenes = gsap.utils.toArray<HTMLElement>(".process-scene");
-      const processTimeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".process-stage",
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 1,
-        },
-      });
-
-      processScenes.forEach((scene, i) => {
-        if (i === 0) {
-          processTimeline.to(scene, { opacity: 1, scale: 1, y: 0, clipPath: "inset(0 0 0 0)", duration: 0.15 });
-        }
-        processTimeline.to(".process-meter span", {
-          scaleX: (i + 1) / processScenes.length,
-          duration: 0.7,
+        gsap.to(".final-ring", {
+          rotation: 90,
           ease: "none",
-        }, i * 0.8);
-
-        if (i < processScenes.length - 1) {
-          processTimeline.to(scene, {
-            opacity: 0,
-            scale: 0.92,
-            y: -12,
-            clipPath: "inset(0 0 0 18%)",
-            duration: 0.8,
-            ease: "power2.inOut",
-          });
-          processTimeline.fromTo(processScenes[i + 1],
-            { opacity: 0, scale: 1.06, y: 12, clipPath: "inset(0 18% 0 0)" },
-            { opacity: 1, scale: 1, y: 0, clipPath: "inset(0 0 0 0)", duration: 0.8, ease: "power2.inOut" },
-            "<"
-          );
-        }
+          scrollTrigger: {
+            trigger: ".final-mark",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 2,
+          },
+        });
       });
 
-      // 06 — styles list magnetic slide
-      gsap.utils.toArray<HTMLElement>(".style-item").forEach((item) => {
-        const title = item.querySelector("h3");
-        if (!title) return;
-        item.addEventListener("mouseenter", () => gsap.to(title, { x: 22, duration: 0.45, ease: "power3.out" }));
-        item.addEventListener("mouseleave", () => gsap.to(title, { x: 0, duration: 0.45, ease: "power3.out" }));
-      });
-
-      // 07 — studio photograph breathes through the viewport
-      gsap.to(".studio-photo", {
-        yPercent: -10,
-        scale: 1.1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".studio-editorial",
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.4,
-        },
-      });
-
-      // 08 — final circular mark rotates with the page
-      gsap.to(".final-ring", {
-        rotation: 360,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".final-mark",
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.5,
-        },
-      });
-
-      // 09 — scroll progress
+      // Global progress — one transform only.
       gsap.to(".scroll-progress span", {
         scaleX: 1,
         ease: "none",
         scrollTrigger: {
-          trigger: document.body,
+          trigger: document.documentElement,
           start: "top top",
           end: "max",
-          scrub: true,
+          scrub: 0.15,
         },
       });
 
-      // 10 — navigation breathes away while scrolling down
-      let lastY = 0;
-      ScrollTrigger.create({
-        start: 1,
-        end: "max",
-        onUpdate: (self) => {
-          const y = self.scroll();
-          if (Math.abs(y - lastY) < 4) return;
-          gsap.to(".nav", {
-            y: y > lastY ? -88 : 0,
-            duration: 0.45,
-            ease: "power3.out",
-            overwrite: true,
-          });
-          lastY = y;
-        },
+      // Magnetic-ish style interaction without global mousemove listeners.
+      gsap.utils.toArray<HTMLElement>(".style-item").forEach((item) => {
+        const title = item.querySelector("h3");
+        const arrow = item.querySelector("i");
+        if (!title || !arrow) return;
+
+        const enter = () => {
+          gsap.to(title, { x: 18, duration: 0.35, ease: "power3.out" });
+          gsap.to(arrow, { x: -8, rotation: -8, duration: 0.35, ease: "power3.out" });
+        };
+        const leave = () => {
+          gsap.to(title, { x: 0, duration: 0.4, ease: "power3.out" });
+          gsap.to(arrow, { x: 0, rotation: 0, duration: 0.4, ease: "power3.out" });
+        };
+
+        item.addEventListener("mouseenter", enter);
+        item.addEventListener("mouseleave", leave);
+        return () => {
+          item.removeEventListener("mouseenter", enter);
+          item.removeEventListener("mouseleave", leave);
+        };
       });
 
-      ScrollTrigger.refresh();
+      // Refresh after images settle.
+      const refresh = () => ScrollTrigger.refresh();
+      window.addEventListener("load", refresh, { once: true });
+
+      return () => {
+        window.removeEventListener("load", refresh);
+        mm.revert();
+      };
     });
 
     return () => {
       ctx.revert();
+      gsap.ticker.remove(raf);
       lenis.destroy();
+      frame = 0;
     };
   }, []);
 
