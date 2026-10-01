@@ -85,7 +85,7 @@ export default function Home() {
             <span className="eyebrow">02 / SELECTED WORK</span><h2>THE<br /><em>INK</em><br />ARCHIVE.</h2>
             <p>SCROLL THROUGH<br />THE ONYX INDEX</p><span className="archive-count">07 / 07</span>
           </div>
-          <div className="horizontal-track">
+          <div className="horizontal-track" data-lenis-prevent>
             {gallery.map((item, i) => (
               <article className="archive-card" key={item.no}>
                 <div className="archive-image">
