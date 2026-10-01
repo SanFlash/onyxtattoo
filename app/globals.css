@@ -33,3 +33,28 @@ html.lenis.lenis-stopped{overflow:hidden}
   .hero,.manifesto,.quote-stage,.horizontal-stage,.process-stage,.detail-stage,.depth-gallery,.style-index,.studio-editorial,.final-mark{transform:translateZ(0)}
   .manifesto-image img,.detail-image img,.studio-frame img,.depth-photo,.hero-photo-inner{will-change:transform}
 }
+
+/* ONYX brand visibility */
+.logo-lockup{position:relative;gap:2px;align-items:flex-start}
+.logo-onyx{font-weight:800;color:var(--bone);text-shadow:0 0 18px #eee9df22}
+.logo-lockup small{display:block;color:#c7c0b5;opacity:1}
+.brand-symbol{position:absolute;left:-17px;top:4px;color:var(--gold);font-size:9px}
+.hero-brand{position:absolute;z-index:6;top:11vh;right:4.5vw;display:grid;grid-template-columns:auto 1fr;column-gap:9px;align-items:center;text-align:right}
+.hero-brand span{grid-row:1 / span 2;color:var(--gold);font-size:13px}
+.hero-brand strong{font:800 18px/1 Space Grotesk;letter-spacing:.16em}
+.hero-brand small{font:600 6px/1.4 Inter;letter-spacing:.38em;color:#d0c9bd}
+.footer-brand{display:flex;align-items:center;gap:9px;color:var(--bone)}
+.footer-brand .logo{font:800 28px/1 Space Grotesk;letter-spacing:.12em}
+.footer-brand small{font-size:6px;letter-spacing:.3em;color:#aaa}
+.footer-mark{color:var(--gold);font-size:10px}
+@media(max-width:800px){
+  .logo-lockup{width:auto;min-width:122px}
+  .brand-symbol{left:-13px;font-size:7px}
+  .logo-onyx{font-size:23px;letter-spacing:.13em}
+  .logo-lockup small{font-size:6px;letter-spacing:.25em}
+  .hero-brand{top:78px;right:5vw;grid-template-columns:auto 1fr;opacity:.95}
+  .hero-brand strong{font-size:17px}
+  .hero-brand small{font-size:5px;letter-spacing:.3em}
+  .footer{grid-template-columns:1fr;gap:18px;padding:35px 5vw}
+  .footer-brand .logo{font-size:24px}
+}
