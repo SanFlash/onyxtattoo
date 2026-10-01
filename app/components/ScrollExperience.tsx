@@ -19,7 +19,8 @@ export default function ScrollExperience() {
     let lenis: Lenis | null = null;
     let raf: ((time: number) => void) | null = null;
     let tickerScroll: ((event: { velocity?: number }) => void) | null = null;
-    let navScroll: ((event?: { scroll: number } | Event) => void) | null = null;
+    let navScroll: ((event?: { scroll: number }) => void) | null = null;
+    let nativeScroll: (() => void) | null = null;
     const isMobile = window.matchMedia("(max-width: 800px)").matches || window.matchMedia("(pointer: coarse)").matches;
 
     try {
@@ -77,7 +78,8 @@ export default function ScrollExperience() {
         if (lenis) {
           lenis.on("scroll", navScroll);
         } else {
-          window.addEventListener("scroll", navScroll, { passive: true });
+          nativeScroll = () => navScroll?.();
+          window.addEventListener("scroll", nativeScroll, { passive: true });
         }
 
         const ticker = document.querySelector<HTMLElement>(".marquee-track");
@@ -433,8 +435,8 @@ export default function ScrollExperience() {
         try {
           if (navScroll) {
             lenis.off("scroll", navScroll);
-          } else {
-            window.removeEventListener("scroll", navScroll);
+          } else if (nativeScroll) {
+            window.removeEventListener("scroll", nativeScroll);
           }
           if (tickerScroll) lenis.off("scroll", tickerScroll);
           lenis.off("scroll", ScrollTrigger.update);
