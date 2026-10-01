@@ -84,7 +84,7 @@ export default function ScrollExperience() {
         const track = document.querySelector<HTMLElement>(".horizontal-track");
         if (track) {
           const getDistance = () => Math.max(0, track.scrollWidth - window.innerWidth + window.innerWidth * 0.08);
-          gsap.to(track, {
+          const horizontalTween = gsap.to(track, {
             x: () => -getDistance(),
             ease: "none",
             scrollTrigger: {
@@ -100,12 +100,29 @@ export default function ScrollExperience() {
             const image = card.querySelector("img");
             gsap.fromTo(card,
               { y: i % 2 ? 55 : -35, rotate: i % 2 ? 1.5 : -1.5, opacity: 0.45 },
-              { y:0, rotate:0, opacity:1, ease:"none",
-                scrollTrigger:{trigger:card,containerAnimation:undefined,start:"left 90%",end:"left 45%",scrub:1}}
+              { y: 0, rotate: 0, opacity: 1, ease: "none",
+                scrollTrigger: {
+                  trigger: card,
+                  containerAnimation: horizontalTween,
+                  start: "left 88%",
+                  end: "left 42%",
+                  scrub: 1,
+                }
+              }
             );
             if (image) {
-              gsap.to(image,{xPercent:i%2?-5:5,scale:1.09,ease:"none",
-                scrollTrigger:{trigger:card,start:"top bottom",end:"bottom top",scrub:1.4}});
+              gsap.to(image, {
+                xPercent: i % 2 ? -5 : 5,
+                scale: 1.08,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: card,
+                  containerAnimation: horizontalTween,
+                  start: "left 100%",
+                  end: "right 0%",
+                  scrub: 1.3,
+                }
+              });
             }
           });
         }
@@ -166,7 +183,7 @@ export default function ScrollExperience() {
 
         gsap.utils.toArray<HTMLElement>(".archive-card").forEach((card)=>{
           gsap.from(card,{y:35,opacity:0,duration:.7,ease:"power3.out",
-            scrollTrigger:{trigger:card,start:"left 90%",once:true,horizontal:true}});
+            scrollTrigger:{trigger:card,start:"top 90%",once:true}});
         });
 
         gsap.to(".final-ring",{rotation:90,ease:"none",
