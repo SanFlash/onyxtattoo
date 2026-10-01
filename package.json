@@ -1,9 +1,33 @@
 {
-  "name":"onyxtattoo",
-  "version":"1.0.0",
-  "private":true,
-  "scripts":{"dev":"next dev","build":"prisma generate && next build","start":"next start","lint":"next lint","test":"echo \"Tests configured in CI\"","db:generate":"prisma generate","db:push":"prisma db push","db:migrate":"prisma migrate deploy"},
-  "engines":{"node":">=20.0.0"},
-  "dependencies":{"@prisma/client":"^6.16.2","next":"^15.5.4","react":"^19.1.1","react-dom":"^19.1.1","zod":"^4.1.5"},
-  "devDependencies":{"@types/node":"^22.18.6","@types/react":"^19.1.13","@types/react-dom":"^19.1.9","prisma":"^6.16.2","typescript":"^5.9.2"}
+  "name": "onyxtattoo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "echo \"Tests configured in CI\"",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy"
+  },
+  "engines": {
+    "node": "20.x",
+    "npm": ">=10"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.2",
+    "next": "^15.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.6",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "prisma": "^6.16.2",
+    "typescript": "^5.9.2"
+  }
 }
