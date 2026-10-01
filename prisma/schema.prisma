@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum BookingStatus { PENDING CONFIRMED RESCHEDULE_REQUESTED COMPLETED CANCELLED NO_SHOW }
+enum UserRole { SUPER_ADMIN ADMIN MANAGER ARTIST STAFF VIEWER }
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         UserRole @default(STAFF)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  auditLogs    AuditLog[]
+}
+
+model Artist {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  bio         String?
+  specialties String[]
+  imageUrl    String?
+  instagram   String?
+  active      Boolean  @default(true)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  bookings    Booking[]
+  portfolio   Portfolio[]
+}
+
+model Customer {
+  id        String    @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  whatsapp  String?
+  notes     String?
+  consent   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  bookingNumber   String        @unique
+  customerId      String
+  artistId        String?
+  service         String
+  style           String?
+  placement       String?
+  size            String?
+  description     String
+  preferredDate   DateTime?
+  preferredTime   String?
+  budgetRange     String?
+  colorMode       String?
+  referenceUrls   String[]
+  status          BookingStatus @default(PENDING)
+  adminNotes      String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  customer        Customer      @relation(fields:[customerId], references:[id])
+  artist          Artist?       @relation(fields:[artistId], references:[id])
+  payments        Payment[]
+  @@index([status])
+  @@index([preferredDate])
+  @@index([customerId])
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  bookingId     String
+  amount        Decimal  @db.Decimal(10,2)
+  status        String
+  provider      String?
+  transactionId String?
+  createdAt     DateTime @default(now())
+  booking       Booking  @relation(fields:[bookingId], references:[id])
+}
+
+model Portfolio {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?
+  style       String?
+  placement   String?
+  imageUrl    String
+  altText     String
+  featured    Boolean  @default(false)
+  published   Boolean  @default(false)
+  artistId    String?
+  artist      Artist?  @relation(fields:[artistId], references:[id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@index([style])
+  @@index([published])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  before    Json?
+  after     Json?
+  ip        String?
+  createdAt DateTime @default(now())
+  user      User? @relation(fields:[userId], references:[id])
+  @@index([createdAt])
+}
