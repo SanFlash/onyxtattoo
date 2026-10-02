@@ -58,3 +58,47 @@ html.lenis.lenis-stopped{overflow:hidden}
   .footer{grid-template-columns:1fr;gap:18px;padding:35px 5vw}
   .footer-brand .logo{font-size:24px}
 }
+
+
+/* Responsive motion alignment */
+.onyx-shell{overflow-x:clip}
+.hero,.manifesto,.quote-stage,.horizontal-stage,.process-stage,.detail-stage,.depth-gallery,.style-index,.studio-editorial,.final-mark{contain:paint}
+.hero-photo-inner,.manifesto-image img,.archive-image img,.detail-image img,.depth-photo,.studio-frame img,.final-ring,.final-word{backface-visibility:hidden;transform:translateZ(0);will-change:transform}
+.horizontal-track{min-width:max-content;transform:translateZ(0)}
+.process-scenes{min-width:0}
+@media (min-width:1101px){
+  .horizontal-stage{height:560vh}
+  .horizontal-viewport{height:100svh}
+  .archive-image{height:min(66svh,720px)}
+}
+@media (min-width:601px) and (max-width:1100px){
+  .hero{min-height:780px}
+  .manifesto,.detail-stage,.depth-gallery,.studio-editorial{padding-left:6vw;padding-right:6vw}
+  .manifesto{grid-template-columns:60px minmax(280px,1fr) minmax(280px,.9fr);gap:4vw}
+  .archive-card{width:min(40vw,480px)}
+  .archive-image{height:min(62svh,620px)}
+  .horizontal-track{gap:3vw;padding-left:6vw;padding-right:6vw}
+  .detail-grid{gap:3vw}
+}
+@media (max-width:600px){
+  html,body{overflow-x:hidden}
+  .hero{min-height:100svh;height:auto}
+  .hero-photo-inner{inset:-9%}
+  .hero-copy{min-height:100svh}
+  .manifesto-image,.detail-image,.studio-frame{min-height:0}
+  .manifesto-image{height:min(65svh,620px)}
+  .horizontal-stage{padding-top:11svh}
+  .horizontal-track{gap:18px;padding-left:6vw;padding-right:6vw;padding-bottom:18px;touch-action:pan-x;overscroll-behavior-inline:contain}
+  .archive-card{width:min(82vw,430px)}
+  .archive-image{height:min(67svh,650px)}
+  .process-sticky{height:100svh}
+  .process-copy{height:34svh}
+  .process-scenes{height:66svh}
+  .process-scene{padding-top:5svh;padding-bottom:6svh}
+  .depth-stack{height:min(92svh,760px)}
+  .studio-frame{height:min(68svh,620px)}
+  .final-mark{min-height:100svh}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero-photo-inner,.manifesto-image img,.archive-image img,.detail-image img,.depth-photo,.studio-frame img,.final-ring,.final-word{will-change:auto}
+}
