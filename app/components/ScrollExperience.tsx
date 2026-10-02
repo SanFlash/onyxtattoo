@@ -182,7 +182,7 @@ export default function ScrollExperience() {
             start: "top top",
             end: "bottom bottom",
             scrub: isTouch ? 0.55 : 0.35,
-            snap: isTouch ? false : {
+            snap: isTouch ? undefined : {
               snapTo: "labels",
               duration: { min: 0.12, max: 0.45 },
               delay: 0.08,
