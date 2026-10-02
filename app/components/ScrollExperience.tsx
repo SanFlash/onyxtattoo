@@ -17,7 +17,6 @@ export default function ScrollExperience() {
     if (reduced) return;
 
     let lenis: Lenis | null = null;
-    let raf: ((time: number) => void) | null = null;
     let tickerScroll: ((event: { velocity?: number }) => void) | null = null;
     let navScroll: ((event?: { scroll: number }) => void) | null = null;
     let refreshTimer: number | null = null;
@@ -53,10 +52,6 @@ export default function ScrollExperience() {
         }
         lenis = null;
       }
-      if (raf) {
-        gsap.ticker.remove(raf);
-        raf = null;
-      }
     };
 
     const scheduleRefresh = () => {
@@ -90,14 +85,6 @@ export default function ScrollExperience() {
       });
 
       const activeLenis = lenis;
-
-      raf = (time: number) => {
-        try {
-          activeLenis.raf(time * 1000);
-        } catch {
-          // Keep the page usable if a browser has an unexpected Lenis runtime issue.
-        }
-      };
 
       // Lenis owns the animation frame; ScrollTrigger is updated from the
       // same Lenis scroll event so scrubbed animations never drift from the
@@ -143,7 +130,7 @@ export default function ScrollExperience() {
           gsap.to(ticker, { xPercent: -28, duration: 22, repeat: -1, ease: "none" });
         }
 
-        mm.add("(min-width: 1101px)", () => {
+        mm.add("(min-width: 801px)", () => {
           gsap.to(".hero-photo-inner", {
             scale: 1.18, yPercent: -8, xPercent: 4, ease: "none",
             scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.6 },
@@ -343,6 +330,10 @@ export default function ScrollExperience() {
           gsap.to(".final-ring:not(.final-ring-small)", {
             rotation: 180, scale: 1.12, ease: "none",
             scrollTrigger: { trigger: ".final-mark", start: "top bottom", end: "bottom top", scrub: 1.6 },
+          });
+          gsap.to(".final-logo-image", {
+            rotation: -90, scale: 1.08, yPercent: -4, ease: "none",
+            scrollTrigger: { trigger: ".final-mark", start: "top bottom", end: "bottom top", scrub: 1.8 },
           });
           gsap.to(".final-ring-small", {
             rotation: -240, scale: 0.88, ease: "none",
