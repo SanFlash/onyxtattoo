@@ -1,0 +1,3 @@
+import Link from "next/link";
+const styles=["REALISM","BLACK & GREY","FINE LINE","BLACKWORK","GEOMETRIC","CUSTOM","COVER-UP","ORNAMENTAL"];
+export default function Styles(){return <main className="inner-page"><nav className="inner-nav"><Link href="/">ONYX</Link><Link className="navcta" href="/booking">BOOK ↗</Link></nav><section className="inner-hero"><span className="eyebrow">STYLE INDEX / 001</span><h1>FIND<br/><em>YOUR STYLE.</em></h1><p>Explore the visual directions that can shape a consultation.</p></section><section className="style-board">{styles.map((s,i)=><Link key={s} href="/booking" className="style-board-row"><span>0{i+1}</span><strong>{s}</strong><i>↗</i></Link>)}</section></main>}
