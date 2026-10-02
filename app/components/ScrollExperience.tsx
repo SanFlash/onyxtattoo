@@ -86,7 +86,7 @@ export default function ScrollExperience() {
         touchMultiplier: 1,
         anchors: true,
         allowNestedScroll: true,
-        autoRaf: false,
+        autoRaf: true,
       });
 
       const activeLenis = lenis;
@@ -99,9 +99,10 @@ export default function ScrollExperience() {
         }
       };
 
+      // Lenis owns the animation frame; ScrollTrigger is updated from the
+      // same Lenis scroll event so scrubbed animations never drift from the
+      // smooth-scroll position.
       activeLenis.on("scroll", ScrollTrigger.update);
-      gsap.ticker.add(raf, false, true);
-      gsap.ticker.lagSmoothing(0);
 
       const ctx = gsap.context(() => {
         const mm = gsap.matchMedia();
@@ -230,6 +231,22 @@ export default function ScrollExperience() {
 
           // Sticky process scenes.
           const scenes = gsap.utils.toArray<HTMLElement>(".process-scene");
+          // Normalize every scene before the timeline starts. This prevents
+          // overlapping text during first paint and makes the handoff deterministic.
+          gsap.set(scenes, {
+            opacity: 0,
+            x: "8%",
+            y: 24,
+            scale: 1.03,
+            clipPath: "inset(0 0 0 14%)",
+          });
+          gsap.set(scenes[0], {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            clipPath: "inset(0)",
+          });
           const processTl = gsap.timeline({
             scrollTrigger: { trigger: ".process-stage", start: "top top", end: "bottom bottom", scrub: 1 },
           });
@@ -548,6 +565,13 @@ export default function ScrollExperience() {
         gsap.to(".scroll-progress span", {
           scaleX: 1, ease: "none",
           scrollTrigger: { trigger: document.documentElement, start: "top top", end: "max", scrub: 0.1 },
+        });
+
+        // Final safety refresh after all responsive geometry, fonts and images
+        // have had a chance to settle.
+        requestAnimationFrame(() => {
+          ScrollTrigger.refresh(true);
+          window.setTimeout(() => ScrollTrigger.refresh(true), 350);
         });
 
         const refresh = () => {
