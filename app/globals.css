@@ -102,3 +102,32 @@ html.lenis.lenis-stopped{overflow:hidden}
 @media (prefers-reduced-motion:reduce){
   .hero-photo-inner,.manifesto-image img,.archive-image img,.detail-image img,.depth-photo,.studio-frame img,.final-ring,.final-word{will-change:auto}
 }
+/* --- ONYX motion + brand reliability patch --- */
+.logo-lockup{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:2px;width:128px;min-height:52px;overflow:visible}
+.brand-logo-image{display:block;width:122px;height:48px;max-width:none;object-fit:contain;object-position:left center;filter:none;opacity:1}
+.logo-fallback{display:none}
+.logo-lockup .brand-symbol{position:absolute;left:-17px;top:10px;color:var(--gold);font-size:9px;z-index:2}
+.nav{isolation:isolate}
+.nav:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#050505f5,#050505c8 55%,#050505e8);z-index:-1;pointer-events:none}
+.nav .brand-logo-image{position:relative;z-index:3}
+.horizontal-viewport,.process-sticky{will-change:transform}
+.horizontal-stage,.process-stage,.detail-stage,.depth-gallery,.studio-editorial,.final-mark{contain:layout}
+.horizontal-stage,.process-stage{overflow:visible}
+.process-sticky{overflow:hidden}
+.process-scenes{min-width:0;min-height:0}
+.process-scene{pointer-events:none}
+.process-scene:first-child{pointer-events:auto}
+@media (max-width:1100px){
+  .brand-logo-image{width:116px;height:44px}
+  .logo-lockup{width:122px}
+}
+@media (max-width:600px){
+  .brand-logo-image{width:104px;height:40px}
+  .logo-lockup{width:108px;min-height:44px}
+  .logo-lockup .brand-symbol{left:-12px;top:7px;font-size:7px}
+}
+
+/* Give every major chapter an unmistakable scroll-linked movement. */
+.manifesto-image,.detail-image,.studio-frame,.depth-photo,.archive-image{transform:translate3d(0,0,0);backface-visibility:hidden}
+.manifesto-copy,.detail-heading,.depth-copy,.studio-copy,.style-item{will-change:transform,opacity}
+.quote-center,.quote-word,.process-scene,.final-word{backface-visibility:hidden}
