@@ -240,9 +240,6 @@ export default function ScrollExperience() {
                 start: "top top",
                 end: () => "+=" + Math.max(window.innerHeight * 4, track.scrollWidth * 1.25),
                 scrub: true,
-                pin: ".horizontal-viewport",
-                pinSpacing: true,
-                anticipatePin: 1,
                 invalidateOnRefresh: true,
               },
             });
