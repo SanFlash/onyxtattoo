@@ -552,7 +552,7 @@ export default function ScrollExperience() {
         );
         velocityScroll = (event: { velocity?: number }) => {
           const velocity = Math.max(-1, Math.min(1, (event.velocity || 0) / 2.5));
-          velocityTo.forEach((setter) => setter(velocity.toFixed(3)));
+          velocityTo.forEach((setter) => setter(velocity));
         };
         activeLenis.on("scroll", velocityScroll);
 
