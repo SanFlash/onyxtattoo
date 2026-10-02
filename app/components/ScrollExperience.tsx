@@ -20,35 +20,88 @@ export default function ScrollExperience() {
     let raf: ((time: number) => void) | null = null;
     let tickerScroll: ((event: { velocity?: number }) => void) | null = null;
     let navScroll: ((event?: { scroll: number }) => void) | null = null;
-    let nativeScroll: (() => void) | null = null;
-    const isMobile = window.matchMedia("(max-width: 800px)").matches || window.matchMedia("(pointer: coarse)").matches;
+    let refreshTimer: number | null = null;
+    let resizeObserver: ResizeObserver | null = null;
+    let visualViewport: VisualViewport | null = null;
+    let imageLoadHandlers: Array<() => void> = [];
+
+    const isTouch = ScrollTrigger.isTouch > 0 || window.matchMedia("(pointer: coarse)").matches;
+
+    const cleanupMotion = () => {
+      if (refreshTimer !== null) {
+        window.clearTimeout(refreshTimer);
+        refreshTimer = null;
+      }
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
+      }
+      if (visualViewport) {
+        visualViewport.removeEventListener("resize", scheduleRefresh);
+        visualViewport = null;
+      }
+      imageLoadHandlers.forEach((handler) => handler());
+      imageLoadHandlers = [];
+      if (lenis) {
+        try {
+          if (navScroll) lenis.off("scroll", navScroll);
+          if (tickerScroll) lenis.off("scroll", tickerScroll);
+          lenis.off("scroll", ScrollTrigger.update);
+          lenis.destroy();
+        } catch {
+          // Ignore cleanup errors during route changes.
+        }
+        lenis = null;
+      }
+      if (raf) {
+        gsap.ticker.remove(raf);
+        raf = null;
+      }
+    };
+
+    const scheduleRefresh = () => {
+      if (refreshTimer !== null) window.clearTimeout(refreshTimer);
+      refreshTimer = window.setTimeout(() => {
+        refreshTimer = null;
+        try {
+          ScrollTrigger.refresh(true);
+          lenis?.resize();
+        } catch {
+          // Keep the page usable if a browser reports an unstable viewport.
+        }
+      }, 120);
+    };
 
     try {
-      // Mobile uses the browser's native touch scroll so ScrollTrigger receives
-      // every finger-scroll update reliably. Lenis is reserved for desktop,
-      // where it smooths wheel scrolling without interfering with touch input.
-      if (!isMobile) {
-        lenis = new Lenis({
-          lerp: 0.085,
-          smoothWheel: true,
-          anchors: true,
-          allowNestedScroll: true,
-        });
+      // Use one scroll engine across desktop, tablets and phones. This prevents
+      // ScrollTrigger from reading native scrollY while Lenis is animating a
+      // different virtual position. syncTouch gives touch devices the same
+      // scroll-linked animation clock without requiring a separate mobile path.
+      lenis = new Lenis({
+        lerp: isTouch ? 0.11 : 0.085,
+        smoothWheel: true,
+        syncTouch: isTouch,
+        syncTouchLerp: 0.075,
+        touchInertiaExponent: 1.7,
+        touchMultiplier: 1,
+        anchors: true,
+        allowNestedScroll: true,
+        autoRaf: false,
+      });
 
-        const activeLenis = lenis;
+      const activeLenis = lenis;
 
-        raf = (time: number) => {
-          try {
-            activeLenis.raf(time * 1000);
-          } catch {
-            // Keep the page usable if a browser has an unexpected Lenis runtime issue.
-          }
-        };
+      raf = (time: number) => {
+        try {
+          activeLenis.raf(time * 1000);
+        } catch {
+          // Keep the page usable if a browser has an unexpected Lenis runtime issue.
+        }
+      };
 
-        activeLenis.on("scroll", ScrollTrigger.update);
-        gsap.ticker.add(raf);
-        gsap.ticker.lagSmoothing(0);
-      }
+      activeLenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add(raf, false, true);
+      gsap.ticker.lagSmoothing(0);
 
       const ctx = gsap.context(() => {
         const mm = gsap.matchMedia();
@@ -75,12 +128,7 @@ export default function ScrollExperience() {
           lastScroll = current;
         };
 
-        if (lenis) {
-          lenis.on("scroll", navScroll);
-        } else {
-          nativeScroll = () => navScroll?.();
-          window.addEventListener("scroll", nativeScroll, { passive: true });
-        }
+        lenis.on("scroll", navScroll);
 
         const ticker = document.querySelector<HTMLElement>(".marquee-track");
         if (ticker) {
@@ -89,17 +137,8 @@ export default function ScrollExperience() {
             const velocity = Math.max(-1, Math.min(1, (event.velocity || 0) / 2));
             tickerX(velocity * -90);
           };
-          if (lenis) {
-            lenis.on("scroll", tickerScroll);
-          } else {
-            // Native mobile scroll does not expose Lenis velocity; the marquee
-            // still has its continuous motion and the rest of the page remains
-            // fully scroll-linked through ScrollTrigger.
-            gsap.to(ticker, { xPercent: -28, duration: 22, repeat: -1, ease: "none" });
-          }
-          if (lenis) {
-            gsap.to(ticker, { xPercent: -28, duration: 22, repeat: -1, ease: "none" });
-          }
+          lenis.on("scroll", tickerScroll);
+          gsap.to(ticker, { xPercent: -28, duration: 22, repeat: -1, ease: "none" });
         }
 
         mm.add("(min-width: 801px)", () => {
@@ -402,51 +441,50 @@ export default function ScrollExperience() {
         });
 
         const refresh = () => {
-          try {
-            ScrollTrigger.refresh();
-            if (lenis) lenis.resize();
-          } catch {
-            // Animation failure must never break the rendered page.
-          }
+          scheduleRefresh();
         };
 
+        resizeObserver = new ResizeObserver(refresh);
+        const shell = document.querySelector<HTMLElement>(".onyx-shell");
+        if (shell) resizeObserver.observe(shell);
+
+        visualViewport = window.visualViewport ?? null;
+        visualViewport?.addEventListener("resize", refresh, { passive: true });
+        window.addEventListener("orientationchange", refresh, { passive: true });
+
+        document.querySelectorAll<HTMLImageElement>("img").forEach((img) => {
+          if (!img.complete) {
+            const handler = () => scheduleRefresh();
+            img.addEventListener("load", handler, { once: true });
+            imageLoadHandlers.push(() => img.removeEventListener("load", handler));
+          }
+        });
+
         if (document.readyState === "complete") {
-          window.setTimeout(refresh, 50);
+          window.setTimeout(scheduleRefresh, 50);
         } else {
-          window.addEventListener("load", refresh, { once: true });
+          window.addEventListener("load", scheduleRefresh, { once: true });
         }
-        document.fonts?.ready.then(refresh).catch(() => undefined);
+        document.fonts?.ready.then(scheduleRefresh).catch(() => undefined);
 
         return () => {
-          window.removeEventListener("load", refresh);
+          window.removeEventListener("load", scheduleRefresh);
+          window.removeEventListener("orientationchange", scheduleRefresh);
           mm.revert();
+          cleanupMotion();
         };
       });
 
       return () => ctx.revert();
     } catch (error) {
       // Deliberately swallow animation initialization failures.
-      // The server-rendered/static page remains fully usable without motion.
+      // The rendered page remains fully usable without motion.
       console.warn("[ONYX] Motion layer disabled:", error);
+      cleanupMotion();
+      return cleanupMotion;
     }
 
-    return () => {
-      if (lenis) {
-        try {
-          if (navScroll) {
-            lenis.off("scroll", navScroll);
-          } else if (nativeScroll) {
-            window.removeEventListener("scroll", nativeScroll);
-          }
-          if (tickerScroll) lenis.off("scroll", tickerScroll);
-          lenis.off("scroll", ScrollTrigger.update);
-          lenis.destroy();
-        } catch {
-          // Ignore cleanup errors during route changes.
-        }
-      }
-      if (raf) gsap.ticker.remove(raf);
-    };
+    return cleanupMotion;
   }, []);
 
   return null;
