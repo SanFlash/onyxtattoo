@@ -18,6 +18,7 @@ export default function ScrollExperience() {
 
     let lenis: Lenis | null = null;
     let tickerScroll: ((event: { velocity?: number }) => void) | null = null;
+    let velocityScroll: ((event: { velocity?: number }) => void) | null = null;
     let lenisTicker: ((time: number) => void) | null = null;
     let navScroll: ((event?: { scroll: number }) => void) | null = null;
     let refreshTimer: number | null = null;
@@ -50,6 +51,7 @@ export default function ScrollExperience() {
         try {
           if (navScroll) lenis.off("scroll", navScroll);
           if (tickerScroll) lenis.off("scroll", tickerScroll);
+          if (velocityScroll) lenis.off("scroll", velocityScroll);
           lenis.off("scroll", ScrollTrigger.update);
           lenis.destroy();
         } catch {
@@ -548,11 +550,11 @@ export default function ScrollExperience() {
             ease: "power3.out",
           })
         );
-        const velocityHandler = (event: { velocity?: number }) => {
+        velocityScroll = (event: { velocity?: number }) => {
           const velocity = Math.max(-1, Math.min(1, (event.velocity || 0) / 2.5));
           velocityTo.forEach((setter) => setter(velocity.toFixed(3)));
         };
-        activeLenis.on("scroll", velocityHandler);
+        activeLenis.on("scroll", velocityScroll);
 
         const magneticNodes = gsap.utils.toArray<HTMLElement>(".magnetic");
         magneticNodes.forEach((node) => {
