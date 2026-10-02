@@ -1,0 +1,1 @@
+export default function Loading(){return <main className="loading-page"><div className="loading-mark">ONYX</div><div className="loading-line"/></main>}
