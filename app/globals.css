@@ -280,3 +280,110 @@ html.lenis.lenis-stopped{overflow:hidden}
     perspective:1200px;
   }
 }
+
+
+/* --- Editorial scroll system v4 ----------------------------------------- */
+/* Lenis' recommended document rules keep native scrolling accessible while
+   preventing the browser's own smooth-scroll behavior from competing with GSAP. */
+html.lenis,
+html.lenis body{height:auto}
+html.lenis.lenis-smooth{scroll-behavior:auto!important}
+html.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
+html.lenis.lenis-stopped{overflow:hidden}
+
+/* Scroll-linked depth is expressed through a variable so velocity effects never
+   overwrite GSAP's transform matrix. */
+.archive-card,
+.depth-photo,
+.quote-word{
+  --scroll-velocity:0;
+  filter:blur(calc(abs(var(--scroll-velocity)) * 0px));
+}
+
+/* More dimensional image windows. The inner image remains the animated layer. */
+.manifesto-image,
+.archive-image,
+.detail-image,
+.depth-photo,
+.studio-frame{
+  transform-style:preserve-3d;
+  perspective:1200px;
+  overflow:hidden;
+}
+.manifesto-image img,
+.archive-image img,
+.detail-image img,
+.depth-photo img,
+.studio-frame img{
+  transform-origin:50% 50%;
+  will-change:transform,clip-path;
+}
+
+/* Editorial dividers and reveals should not create layout shifts. */
+.detail-heading,
+.style-index-head,
+.studio-copy,
+.footer-brand,
+.manifesto-copy h2,
+.quote-center h2,
+.depth-copy h2,
+.studio-copy h2,
+.final-word,
+.archive-caption,
+.scene-label,
+.scene-no,
+.depth-stat,
+.studio-tags{
+  will-change:transform,opacity,clip-path;
+}
+
+/* Preserve the touch carousel as a native nested scroller. */
+[data-lenis-prevent]{
+  overscroll-behavior:contain;
+}
+@media(max-width:800px){
+  html.lenis.lenis-smooth [data-lenis-prevent]{
+    touch-action:pan-x;
+  }
+  .archive-card{
+    scroll-snap-align:center;
+  }
+}
+
+/* Desktop: give the archive a cinematic "stage" while keeping the track
+   transform owned by ScrollTrigger/containerAnimation. */
+@media(min-width:801px){
+  .horizontal-viewport{
+    overflow:hidden;
+  }
+  .horizontal-track{
+    transform-style:preserve-3d;
+    perspective:1600px;
+  }
+  .archive-card{
+    transform-style:preserve-3d;
+  }
+  .archive-image{
+    box-shadow:0 30px 80px rgba(0,0,0,.28);
+  }
+}
+
+/* Mobile: never let the decorative motion create horizontal page overflow. */
+@media(max-width:800px){
+  .onyx-shell,
+  .hero,
+  .manifesto,
+  .quote-stage,
+  .detail-stage,
+  .depth-gallery,
+  .style-index,
+  .studio-editorial,
+  .final-mark,
+  .footer{
+    max-width:100%;
+    overflow-x:clip;
+  }
+  .process-scenes{
+    overflow:hidden;
+  }
+}
