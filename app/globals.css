@@ -297,7 +297,7 @@ html.lenis.lenis-stopped{overflow:hidden}
 .depth-photo,
 .quote-word{
   --scroll-velocity:0;
-  filter:blur(calc(abs(var(--scroll-velocity)) * 0px));
+  filter:saturate(calc(1 + (var(--scroll-velocity) * .05)));
 }
 
 /* More dimensional image windows. The inner image remains the animated layer. */
