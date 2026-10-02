@@ -128,7 +128,7 @@ export default function ScrollExperience() {
           lastScroll = current;
         };
 
-        const activeLenis = lenis;
+        const activeLenis = lenis!;
         activeLenis.on("scroll", navScroll);
 
         const ticker = document.querySelector<HTMLElement>(".marquee-track");
