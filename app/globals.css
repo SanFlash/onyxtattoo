@@ -711,3 +711,135 @@ html.lenis.lenis-stopped{overflow:hidden}
     scroll-behavior: auto !important;
   }
 }
+
+
+/* =========================================================
+   ONYX RESPONSIVE FLOW PATCH — 2026-10-02
+   Scope: archive + sections 04/05 only.
+   Keeps the existing mobile interaction model intact.
+   ========================================================= */
+
+@media (min-width: 1024px) {
+  /* The archive owns the pin/spacer as a complete chapter. */
+  .redesign .re-work {
+    height: 100svh;
+    min-height: 100svh;
+    padding-top: clamp(70px, 10vh, 110px);
+    padding-bottom: clamp(28px, 5vh, 56px);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .redesign .re-work-head {
+    min-height: 0;
+    height: auto;
+    margin-bottom: clamp(20px, 3vh, 34px);
+  }
+
+  .redesign .re-work-track {
+    height: auto;
+    max-height: calc(100svh - clamp(190px, 27vh, 270px));
+    padding-right: 8vw;
+    overflow: visible;
+    align-items: flex-start;
+  }
+
+  .redesign .re-work-card {
+    width: min(31vw, 500px);
+    max-width: 500px;
+  }
+
+  .redesign .re-work-card:nth-child(even) {
+    margin-top: clamp(14px, 3vh, 34px);
+  }
+
+  .redesign .re-work-image {
+    height: clamp(410px, 58vh, 650px);
+    max-height: calc(100svh - 245px);
+  }
+
+  .redesign .re-work-meta {
+    min-height: 42px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  /* Section 04: give the list a deliberate visual landing zone. */
+  .redesign .re-styles {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+    min-height: 135vh;
+    padding-top: clamp(110px, 14vh, 170px);
+    padding-bottom: clamp(100px, 15vh, 180px);
+  }
+
+  .redesign .re-style-list {
+    align-self: center;
+    padding-bottom: 2px;
+  }
+
+  /* Section 05: its pin owns the chapter space; content cannot
+     collapse into the artists section after the pin releases. */
+  .redesign .re-process {
+    position: relative;
+    z-index: 2;
+    height: 520vh;
+    min-height: 520vh;
+    overflow: visible;
+    isolation: isolate;
+  }
+
+  .redesign .re-process-sticky {
+    min-height: 100svh;
+    height: 100svh;
+  }
+
+  .redesign .re-process-scenes {
+    min-height: 0;
+  }
+
+  .redesign .re-process-scene {
+    min-height: 0;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .redesign .re-work-track {
+    max-height: calc(100svh - 210px);
+  }
+
+  .redesign .re-work-card {
+    width: min(33vw, 450px);
+  }
+
+  .redesign .re-work-image {
+    height: clamp(390px, 55vh, 560px);
+    max-height: calc(100svh - 250px);
+  }
+
+  .redesign .re-styles {
+    grid-template-columns: .8fr 1.2fr;
+    gap: 5vw;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* Mobile keeps the current horizontal swipe archive and sticky ritual.
+     Only add safe bottom breathing room; no motion model changes. */
+  .redesign .re-work {
+    padding-bottom: 10vh;
+  }
+
+  .redesign .re-styles {
+    padding-bottom: 16vh;
+  }
+
+  .redesign .re-process {
+    padding-bottom: 4vh;
+  }
+
+  .redesign .re-process-sticky {
+    min-height: 100svh;
+  }
+}
