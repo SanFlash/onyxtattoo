@@ -529,10 +529,10 @@ export default function ScrollExperience() {
 
         // Footer becomes a final slow reveal instead of appearing abruptly after
         // the CTA, giving the page a complete beginning-to-end motion arc.
-        gsap.from(".footer > *", {
+        gsap.from(".re-footer > *", {
           y: 30, opacity: 0, stagger: 0.08, ease: "power2.out",
           scrollTrigger: {
-            trigger: ".footer",
+            trigger: ".re-footer",
             start: "top 94%",
             end: "top 65%",
             scrub: isTouch ? 0.8 : 0.55,
