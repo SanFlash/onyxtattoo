@@ -131,3 +131,50 @@ html.lenis.lenis-stopped{overflow:hidden}
 .manifesto-image,.detail-image,.studio-frame,.depth-photo,.archive-image{transform:translate3d(0,0,0);backface-visibility:hidden}
 .manifesto-copy,.detail-heading,.depth-copy,.studio-copy,.style-item{will-change:transform,opacity}
 .quote-center,.quote-word,.process-scene,.final-word{backface-visibility:hidden}
+
+/* --- Final circular identity + cross-device scroll reliability --- */
+.hero,.manifesto,.quote-stage,.horizontal-stage,.process-stage,.detail-stage,.depth-gallery,.style-index,.studio-editorial,.final-mark{
+  contain:none;
+}
+.horizontal-viewport,.process-sticky{
+  will-change:auto;
+}
+.horizontal-stage,.process-stage{
+  overflow:visible;
+}
+.final-logo{
+  position:absolute;
+  z-index:1;
+  width:min(22vw,280px);
+  aspect-ratio:1;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+  opacity:1;
+}
+.final-logo-image{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  opacity:.6;
+  filter:drop-shadow(0 0 24px #a9864d20);
+  will-change:transform;
+}
+.final-ring{z-index:0}
+.final-ring-small{z-index:0}
+.final-word{z-index:3}
+.book-button,.final-mark p{z-index:4}
+@media (min-width:801px) and (max-width:1100px){
+  .horizontal-stage{height:560vh}
+  .horizontal-viewport{height:100svh}
+  .horizontal-track{padding-left:5vw;padding-right:5vw}
+  .archive-card{width:min(42vw,500px)}
+  .archive-image{height:min(66svh,680px)}
+  .process-stage{height:430vh}
+  .process-sticky{height:100svh}
+  .final-logo{width:min(30vw,260px)}
+}
+@media (max-width:800px){
+  .final-logo{width:min(48vw,220px)}
+  .final-logo-image{opacity:.6}
+}
