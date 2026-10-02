@@ -1,73 +1,54 @@
 # ONYX Tattoo Studio
 
-Production-ready Next.js foundation for the ONYX Tattoo Studio website and studio-management platform.
+Premium immersive tattoo-studio website and studio-management platform foundation for ONYX Tattoo Studio, Indore.
 
 ## Stack
 
-- Next.js + TypeScript
-- React
-- PostgreSQL
-- Prisma
-- Zod
-- Vercel or Render
+- Next.js + TypeScript + React
+- PostgreSQL + Prisma
+- Zod validation
+- GSAP + ScrollTrigger
+- Lenis smooth scrolling
+- Responsive editorial motion system
+- Render + Vercel deployment configuration
+
+## Public experience
+
+The redesigned experience includes a cinematic hero, editorial manifesto, scroll-driven statement, desktop horizontal portfolio archive, native mobile swipe archive, signature style index, pinned five-stage process, artist presentation, studio presentation, trust/aftercare links, contact CTA, loading and 404 experiences, plus dedicated portfolio, artist, style and studio routes.
+
+Demo artists and portfolio imagery are explicitly demonstration content until real ONYX CMS data is supplied.
+
+## Booking
+
+The booking experience is a multi-step session builder covering service, style, artist preference, placement, preferred date/time, customer details and confirmation. The existing booking API validates with Zod and persists through Prisma/PostgreSQL.
+
+## Admin
+
+`/admin` is a premium operating-console foundation with searchable modules, booking/customer/portfolio/artist/enquiry summaries, a conversion pipeline, and an operations panel. The Prisma schema already contains User, Artist, Customer, Booking, Payment, Portfolio and AuditLog foundations. Protected authentication/RBAC and expanded CMS modules should be connected before using it as a production control plane.
 
 ## Local setup
 
 ```bash
-git clone https://github.com/SanFlash/onyxtattoo.git
-cd onyxtattoo
 npm install
 cp .env.example .env.local
-# fill DATABASE_URL and AUTH_SECRET
+# configure DATABASE_URL, DIRECT_URL and AUTH_SECRET
 npx prisma generate
 npx prisma db push
 npm run dev
 ```
 
-Open http://localhost:3000.
+## Production
 
-Health check: http://localhost:3000/api/health
-
-## Vercel
-
-1. Import the GitHub repository into Vercel.
-2. Framework preset: Next.js.
-3. Build command: `npm run build`.
-4. Add all required variables from `.env.example`.
-5. Use a managed PostgreSQL database such as Supabase, Neon, or Render PostgreSQL.
-6. Deploy.
+```bash
+npm run build
+npm start
+```
 
 ## Render
 
-The repository includes `render.yaml`.
+`render.yaml` uses a standard Next.js Node web service with `npm install`, Prisma generation, `npm run build`, `npm start`, and `/api/health`. Render auto-deploy is enabled from the `main` branch for the existing ONYX service.
 
-1. Create a new Blueprint in Render from this repository.
-2. Set DATABASE_URL, DIRECT_URL, AUTH_SECRET and NEXT_PUBLIC_SITE_URL.
-3. Render installs dependencies with `npm install`, generates Prisma Client and runs the Next.js production build.
-4. The production server runs `npm start`.
-5. Health check: `/api/health`.
-
-The build intentionally uses `npm install` rather than `npm ci` because this repository is bootstrapped without a committed npm lockfile.
-
-## Database
-
-For production, use Prisma migrations:
-
-```bash
-npx prisma migrate deploy
-```
-
-For initial prototyping:
-
-```bash
-npx prisma db push
-```
-
-Before using `migrate deploy` in production, commit the generated Prisma migration directory.
-
-Never commit `.env` files or production credentials.
-
-## Required environment variables
+Required environment variables:
 
 ```env
 DATABASE_URL=
@@ -77,16 +58,31 @@ NEXT_PUBLIC_SITE_URL=
 NEXT_PUBLIC_APP_NAME=ONYX TATTOO STUDIO
 ```
 
-## Current foundation
+## Vercel
 
-- Premium ONYX visual shell
-- Responsive landing page
-- Booking form
-- PostgreSQL/Prisma schema
-- Booking API with Zod validation
-- Health endpoint
-- Admin foundation
-- Security headers
-- Vercel configuration
-- Render Blueprint
-- Environment template
+Import this GitHub repository as a Next.js project and set the same environment variables. `vercel.json` declares the Next.js framework.
+
+## Media
+
+The redesign uses remote demonstration imagery for visual direction. Production ONYX photography and customer references should be moved to managed object/image storage and exposed through the CMS.
+
+## Motion architecture
+
+The page uses a shared Lenis + GSAP ticker, ScrollTrigger scrub/pin/snap where appropriate, responsive animation branches, native touch scrolling for mobile horizontal galleries, and reduced-motion handling. The system deliberately avoids making animation necessary to understand content.
+
+## Smoke test routes
+
+- `/`
+- `/portfolio`
+- `/portfolio/01`
+- `/artists`
+- `/artists/01`
+- `/styles`
+- `/styles/fine-line`
+- `/studio`
+- `/contact`
+- `/booking`
+- `/admin`
+- `/api/health`
+
+Never commit production credentials or secret keys.
