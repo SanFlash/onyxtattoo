@@ -128,7 +128,8 @@ export default function ScrollExperience() {
           lastScroll = current;
         };
 
-        lenis.on("scroll", navScroll);
+        const activeLenis = lenis;
+        activeLenis.on("scroll", navScroll);
 
         const ticker = document.querySelector<HTMLElement>(".marquee-track");
         if (ticker) {
@@ -137,7 +138,7 @@ export default function ScrollExperience() {
             const velocity = Math.max(-1, Math.min(1, (event.velocity || 0) / 2));
             tickerX(velocity * -90);
           };
-          lenis.on("scroll", tickerScroll);
+          activeLenis.on("scroll", tickerScroll);
           gsap.to(ticker, { xPercent: -28, duration: 22, repeat: -1, ease: "none" });
         }
 
