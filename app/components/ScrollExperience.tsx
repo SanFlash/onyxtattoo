@@ -151,9 +151,9 @@ export default function ScrollExperience() {
             0.18
           );
 
-        // Desktop archive: the track itself is the pinned viewport.
-        // This keeps the heading in normal flow and prevents the huge
-        // horizontal transform from covering the next section.
+        // Desktop archive: pin the complete chapter, not the moving track.
+        // This gives ScrollTrigger one stable spacer for the heading + cards,
+        // so the final cards cannot visually leak into the next chapter.
         const work = document.querySelector<HTMLElement>(".re-work");
         const track = document.querySelector<HTMLElement>(".re-work-track");
 
@@ -173,13 +173,14 @@ export default function ScrollExperience() {
             scrollTrigger: {
               id: "onyx-archive",
               trigger: work,
-              start: "top top+=12",
+              start: "top top",
               end: () => "+=" + archiveEnd(),
-              pin: track,
+              pin: work,
               pinSpacing: true,
               scrub: 0.65,
               anticipatePin: 1,
               invalidateOnRefresh: true,
+              refreshPriority: 2,
               preventOverlaps: "onyx-editorial",
             },
           });
