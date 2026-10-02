@@ -556,6 +556,138 @@ export default function ScrollExperience() {
         };
         activeLenis.on("scroll", velocityScroll);
 
+        // New editorial homepage motion system.
+        // These scenes intentionally animate the new redesign classes, not the
+        // legacy selectors, so the redesign remains deterministic.
+        const revealSelectors = [
+          ".re-statement-main > *",
+          ".re-work-head > *",
+          ".re-styles-copy > *",
+          ".re-section-head > *",
+          ".re-studio-copy > *",
+          ".re-trust-panel > *",
+          ".re-final-copy > *",
+        ];
+        revealSelectors.forEach((selector) => {
+          gsap.from(selector, {
+            y: 42,
+            opacity: 0,
+            stagger: 0.06,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: selector,
+              start: "top 88%",
+              end: "top 48%",
+              scrub: isTouch ? 0.8 : 0.55,
+              invalidateOnRefresh: true,
+            },
+          });
+        });
+
+        const chapterImages = [
+          [".re-statement-bg", { yPercent: -12, rotation: -5 }],
+          [".re-studio-image img", { yPercent: -10, scale: 1.08 }],
+          [".re-trust-image img", { yPercent: -12, scale: 1.08 }],
+          [".re-final-image img", { yPercent: -10, scale: 1.08 }],
+        ] as const;
+        chapterImages.forEach(([selector, vars]) => {
+          gsap.to(selector, {
+            ...vars,
+            ease: "none",
+            scrollTrigger: {
+              trigger: selector,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: isTouch ? 1.2 : 0.9,
+              invalidateOnRefresh: true,
+            },
+          });
+        });
+
+        // Editorial horizontal work strip. On desktop the strip is driven by
+        // vertical page scroll; on mobile its native horizontal scroller remains
+        // touch-first.
+        const workTrack = document.querySelector<HTMLElement>(".re-work-track");
+        if (workTrack && !isTouch) {
+          const maxX = () => Math.max(0, workTrack.scrollWidth - window.innerWidth * 0.94);
+          const workTween = gsap.to(workTrack, {
+            x: () => -maxX(),
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".re-work",
+              start: "top top",
+              end: () => "+=" + Math.max(window.innerHeight * 2.6, maxX() * 1.2),
+              scrub: true,
+              invalidateOnRefresh: true,
+            },
+          });
+          gsap.utils.toArray<HTMLElement>(".re-work-card").forEach((card, index) => {
+            const image = card.querySelector("img");
+            gsap.fromTo(card,
+              { y: index % 2 ? 75 : -45, opacity: 0.25, rotateZ: index % 2 ? 1.2 : -1.2 },
+              { y: 0, opacity: 1, rotateZ: 0, ease: "none",
+                scrollTrigger: {
+                  trigger: card,
+                  containerAnimation: workTween,
+                  start: "left 92%",
+                  end: "left 52%",
+                  scrub: true,
+                  invalidateOnRefresh: true,
+                },
+              }
+            );
+            if (image) {
+              gsap.to(image, {
+                xPercent: index % 2 ? -5 : 5,
+                scale: 1.06,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: card,
+                  containerAnimation: workTween,
+                  start: "left 105%",
+                  end: "right -10%",
+                  scrub: true,
+                  invalidateOnRefresh: true,
+                },
+              });
+            }
+          });
+        }
+
+        // Pinned manifesto: typography holds while the image crosses the frame.
+        const manifestoTimeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".re-manifesto",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        });
+        manifestoTimeline
+          .fromTo(".re-manifesto-word",
+            { yPercent: 10, scale: 0.94, opacity: 0.55 },
+            { yPercent: -8, scale: 1.02, opacity: 1, ease: "none" }, 0)
+          .fromTo(".re-manifesto-image",
+            { xPercent: 18, clipPath: "inset(10% 0 10% 16%)", scale: 0.9 },
+            { xPercent: -7, clipPath: "inset(0)", scale: 1.02, ease: "none" }, 0)
+          .fromTo(".re-manifesto-copy",
+            { yPercent: 18, opacity: 0 },
+            { yPercent: -6, opacity: 1, ease: "none" }, 0.1);
+
+        // Statement chapter uses opposing word movement for a poster-like scene.
+        gsap.to(".re-statement-bg", {
+          xPercent: -8,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".re-statement",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        });
+
         const magneticNodes = gsap.utils.toArray<HTMLElement>(".magnetic");
         magneticNodes.forEach((node) => {
           const move = (event: MouseEvent) => {
