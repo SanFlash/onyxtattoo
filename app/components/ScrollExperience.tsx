@@ -18,6 +18,7 @@ export default function ScrollExperience() {
 
     let lenis: Lenis | null = null;
     let tickerScroll: ((event: { velocity?: number }) => void) | null = null;
+    let lenisTicker: ((time: number) => void) | null = null;
     let navScroll: ((event?: { scroll: number }) => void) | null = null;
     let refreshTimer: number | null = null;
     let resizeObserver: ResizeObserver | null = null;
@@ -41,6 +42,10 @@ export default function ScrollExperience() {
       }
       imageLoadHandlers.forEach((handler) => handler());
       imageLoadHandlers = [];
+      if (lenisTicker) {
+        gsap.ticker.remove(lenisTicker);
+        lenisTicker = null;
+      }
       if (lenis) {
         try {
           if (navScroll) lenis.off("scroll", navScroll);
@@ -81,7 +86,7 @@ export default function ScrollExperience() {
         touchMultiplier: 1,
         anchors: true,
         allowNestedScroll: true,
-        autoRaf: true,
+        autoRaf: false,
       });
 
       const activeLenis = lenis;
@@ -90,6 +95,9 @@ export default function ScrollExperience() {
       // same Lenis scroll event so scrubbed animations never drift from the
       // smooth-scroll position.
       activeLenis.on("scroll", ScrollTrigger.update);
+      lenisTicker = (time: number) => activeLenis.raf(time * 1000);
+      gsap.ticker.add(lenisTicker);
+      gsap.ticker.lagSmoothing(0);
 
       const ctx = gsap.context(() => {
         const mm = gsap.matchMedia();
@@ -130,6 +138,47 @@ export default function ScrollExperience() {
           gsap.to(ticker, { xPercent: -28, duration: 22, repeat: -1, ease: "none" });
         }
 
+        // One process timeline for every viewport. CSS owns the sticky geometry;
+        // ScrollTrigger only maps document scroll to one deterministic timeline.
+        const processScenes = gsap.utils.toArray<HTMLElement>(".process-scene");
+        if (processScenes.length) {
+          gsap.set(processScenes, {
+            autoAlpha: 0, x: 7, y: 18, scale: 0.985, rotationY: 7,
+            transformOrigin: "50% 50%", clipPath: "inset(0 12% 0 0)",
+          });
+          gsap.set(processScenes[0], {
+            autoAlpha: 1, x: 0, y: 0, scale: 1, rotationY: 0, clipPath: "inset(0)",
+          });
+          const processTimeline = gsap.timeline({ defaults: { ease: "none" } });
+          processScenes.forEach((scene, index) => {
+            if (index > 0) {
+              processTimeline.fromTo(scene,
+                { autoAlpha: 0, x: 7, y: 18, scale: 0.985, rotationY: 7, clipPath: "inset(0 12% 0 0)" },
+                { autoAlpha: 1, x: 0, y: 0, scale: 1, rotationY: 0, clipPath: "inset(0)", duration: 0.58, ease: "power2.out" },
+                `step-${index}-in`
+              );
+            }
+            if (index < processScenes.length - 1) {
+              processTimeline.to(".process-progress span",
+                { scaleX: (index + 1) / processScenes.length, duration: 0.08 },
+                `step-${index}-in+=0.62`
+              );
+              processTimeline.to(scene,
+                { autoAlpha: 0, x: -7, y: -14, scale: 0.975, rotationY: -7, clipPath: "inset(0 0 0 12%)", duration: 0.34, ease: "power2.in" },
+                `step-${index}-out`
+              );
+              processTimeline.addLabel(`step-${index + 1}-in`);
+            }
+          });
+          processTimeline.to(".process-progress span",
+            { scaleX: 1, duration: 0.08 },
+            `step-${processScenes.length - 1}-in+=0.62`
+          );
+          ScrollTrigger.create({
+            animation: processTimeline, trigger: ".process-stage",
+            start: "top top", end: "bottom bottom", scrub: true, invalidateOnRefresh: true,
+          });
+        }
         mm.add("(min-width: 801px)", () => {
           const heroST = { trigger: ".hero", start: "top top", end: "bottom top" };
 
@@ -216,44 +265,6 @@ export default function ScrollExperience() {
                 xPercent: i % 2 ? -6 : 6, scale: 1.1, ease: "none",
                 scrollTrigger: { trigger: card, containerAnimation: horizontalTween, start: "left 110%", end: "right -10%", scrub: true },
               });
-            });
-          }
-
-          const scenes = gsap.utils.toArray<HTMLElement>(".process-scene");
-          if (scenes.length) {
-            gsap.set(scenes, {
-              autoAlpha: 0, x: 70, y: 16, scale: 0.97, rotationY: 9,
-              transformOrigin: "50% 50%", clipPath: "inset(0 16% 0 0)",
-            });
-            gsap.set(scenes[0], { autoAlpha: 1, x: 0, y: 0, scale: 1, rotationY: 0, clipPath: "inset(0)" });
-
-            const processTl = gsap.timeline({ defaults: { ease: "none" } });
-            scenes.forEach((scene, i) => {
-              if (i > 0) {
-                processTl.to(scene, {
-                  autoAlpha: 1, x: 0, y: 0, scale: 1, rotationY: 0, clipPath: "inset(0)",
-                  duration: 1,
-                }, `scene${i}-in`);
-              }
-              if (i < scenes.length - 1) {
-                processTl.to(".process-progress span", {
-                  scaleX: (i + 1) / scenes.length, duration: 0.12, ease: "none",
-                }, `scene${i}-in+=0.7`);
-                processTl.to(scene, {
-                  autoAlpha: 0, x: -60, y: -12, scale: 0.95, rotationY: -9,
-                  clipPath: "inset(0 0 0 18%)", duration: 0.45, ease: "power2.inOut",
-                });
-                processTl.addLabel(`scene${i+1}-in`);
-              } else {
-                processTl.to(".process-progress span", { scaleX: 1, duration: 0.12, ease: "none" }, "<");
-              }
-            });
-            ScrollTrigger.create({
-              animation: processTl,
-              trigger: ".process-stage", start: "top top",
-              end: () => "+=" + Math.max(window.innerHeight * scenes.length, window.innerHeight * 4),
-              scrub: true, pin: ".process-sticky", pinSpacing: true,
-              anticipatePin: 1, invalidateOnRefresh: true,
             });
           }
 
@@ -365,44 +376,6 @@ export default function ScrollExperience() {
 
           // The process stage remains pinned and its scene transitions are
           // directly driven by vertical touch scroll.
-          const mobileScenes = gsap.utils.toArray<HTMLElement>(".process-scene");
-          if (mobileScenes.length > 1) {
-            const mobileProcess = gsap.timeline({
-              scrollTrigger: {
-                trigger: ".process-stage",
-                start: "top top",
-                end: "bottom bottom",
-                scrub: 1,
-                invalidateOnRefresh: true,
-              },
-            });
-            mobileScenes.forEach((scene, i) => {
-              if (i === 0) {
-                mobileProcess.to(scene, {
-                  opacity: 1, x: 0, y: 0, scale: 1,
-                  clipPath: "inset(0 0 0 0)", duration: 0.2, ease: "none",
-                });
-              }
-              if (i < mobileScenes.length - 1) {
-                mobileProcess.to(scene, {
-                  opacity: 0, x: "-4%", y: -18, scale: 0.96,
-                  clipPath: "inset(0 10% 10% 0)", duration: 0.45, ease: "power2.inOut",
-                });
-                mobileProcess.fromTo(
-                  mobileScenes[i + 1],
-                  { opacity: 0, x: "7%", y: 24, scale: 1.04, clipPath: "inset(10% 0 0 10%)" },
-                  { opacity: 1, x: 0, y: 0, scale: 1, clipPath: "inset(0 0 0 0)", duration: 0.55, ease: "power2.out" },
-                  "<"
-                );
-                mobileProcess.to(
-                  ".process-progress span",
-                  { scaleX: (i + 1) / mobileScenes.length, duration: 0.35, ease: "none" },
-                  "<"
-                );
-              }
-            });
-          }
-
           gsap.utils.toArray<HTMLElement>(".detail-card").forEach((card, i) => {
             const image = card.querySelector<HTMLElement>(".detail-image");
             gsap.from(card, {
