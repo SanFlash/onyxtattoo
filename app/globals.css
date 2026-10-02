@@ -212,3 +212,71 @@ html.lenis.lenis-stopped{overflow:hidden}
   .process-stage{height:430vh!important}
   .process-sticky{height:100dvh!important}
 }
+
+/* --- Scroll reliability cleanup: native geometry + single animation clock --- */
+.hero,.manifesto,.quote-stage,.horizontal-stage,.process-stage,.detail-stage,.depth-gallery,.style-index,.studio-editorial,.final-mark{
+  transform:none!important;
+}
+.horizontal-viewport,
+.process-sticky{
+  will-change:auto!important;
+  transform:none!important;
+}
+.horizontal-stage,
+.process-stage{
+  overflow:visible!important;
+  contain:none!important;
+}
+.process-scene{
+  position:absolute!important;
+  inset:0!important;
+  pointer-events:none;
+  transform-style:preserve-3d;
+  backface-visibility:hidden;
+}
+.process-scene:first-child{pointer-events:auto}
+@media(min-width:801px){
+  .horizontal-stage{height:560vh!important}
+  .horizontal-viewport{
+    height:100svh!important;
+    position:sticky!important;
+    top:0!important;
+  }
+  .horizontal-track{min-width:max-content}
+  .process-stage{height:460vh!important}
+  .process-sticky{
+    height:100svh!important;
+    position:sticky!important;
+    top:0!important;
+  }
+}
+@media(max-width:800px){
+  .horizontal-stage{
+    height:auto!important;
+    padding-top:11svh;
+  }
+  .horizontal-viewport{
+    height:auto!important;
+    position:relative!important;
+    top:auto!important;
+  }
+  .horizontal-track{
+    min-width:0;
+    width:auto;
+    overflow-x:auto!important;
+    touch-action:pan-x;
+    overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;
+  }
+  .process-stage{height:430vh!important}
+  .process-sticky{
+    height:100dvh!important;
+    position:sticky!important;
+    top:0!important;
+  }
+  .process-scenes{
+    min-height:0;
+    overflow:hidden;
+    perspective:1200px;
+  }
+}
