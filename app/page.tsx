@@ -27,7 +27,9 @@ export default function Home() {
 
       <nav className="nav">
         <Link className="logo-lockup" href="/" aria-label="ONYX Tattoo Studio">
-          <span className="brand-symbol" aria-hidden="true">✦</span><span className="logo-onyx">ONYX</span><small>TATTOO STUDIO</small>
+          <span className="brand-symbol" aria-hidden="true">✦</span>
+          <img className="brand-logo-image" src="/brand/onxy-logo.png" alt="ONYX Tattoo Studio" />
+          <span className="logo-fallback" aria-hidden="true"><span className="logo-onyx">ONYX</span><small>TATTOO STUDIO</small></span>
         </Link>
         <div className="navlinks">
           <Link href="#work">WORK</Link><Link href="#process">PROCESS</Link><Link href="#styles">STYLES</Link><Link href="#studio">STUDIO</Link>
