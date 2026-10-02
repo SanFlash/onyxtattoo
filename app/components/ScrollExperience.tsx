@@ -7,7 +7,7 @@ import Lenis from "lenis";
 
 gsap.registerPlugin(ScrollTrigger);
 
-ScrollTrigger.config({ ignoreMobileResize: true });
+
 
 export default function ScrollExperience() {
   useLayoutEffect(() => {
@@ -338,34 +338,77 @@ export default function ScrollExperience() {
         });
 
         mm.add("(max-width: 800px)", () => {
-          // Mobile keeps native touch scrolling while Lenis syncTouch adds smooth inertia.
-          // These scrubbed effects are intentionally lighter than desktop choreography.
+          // Full mobile choreography. Lenis syncTouch keeps touch scrolling
+          // synchronized with ScrollTrigger, while these animations use the
+          // same visual language as desktop with smaller travel distances.
+
           gsap.to(".hero-photo-inner", {
-            scale: 1.08, yPercent: -5, ease: "none",
+            scale: 1.12, yPercent: -7, xPercent: 2, ease: "none",
             scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.2 },
           });
           gsap.to(".hero-copy", {
-            yPercent: -7, ease: "none",
+            yPercent: -9, opacity: 0.72, ease: "none",
             scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 },
           });
-          gsap.to(".quote-word", {
-            xPercent: -8, ease: "none",
-            scrollTrigger: { trigger: ".quote-stage", start: "top bottom", end: "bottom top", scrub: 1.4 },
+          gsap.to(".hero-brand", {
+            yPercent: -45, opacity: 0.45, ease: "none",
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.2 },
           });
-          gsap.to(".manifesto-image img, .detail-image img, .studio-frame img", {
-            yPercent: -7, scale: 1.06, ease: "none",
-            scrollTrigger: { trigger: ".manifesto", start: "top bottom", end: "bottom top", scrub: 1.4 },
-          });
-          gsap.to(".depth-one", {
-            yPercent: -10, rotation: -2, ease: "none",
-            scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.5 },
-          });
-          gsap.to(".depth-two", {
-            yPercent: 7, rotation: 2, ease: "none",
-            scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.2 },
+          gsap.to(".hero-side", {
+            yPercent: -30, ease: "none",
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.4 },
           });
 
-          // Mobile process choreography: swipe/scroll drives the scene transitions.
+          gsap.fromTo(".manifesto-image",
+            { clipPath: "inset(12% 0 12% 0)", scale: 0.96 },
+            { clipPath: "inset(0% 0 0% 0)", scale: 1, ease: "none",
+              scrollTrigger: { trigger: ".manifesto", start: "top 88%", end: "top 35%", scrub: 1 } }
+          );
+          gsap.to(".manifesto-image img", {
+            yPercent: -9, scale: 1.08, ease: "none",
+            scrollTrigger: { trigger: ".manifesto-image", start: "top bottom", end: "bottom top", scrub: 1.4 },
+          });
+          gsap.to(".manifesto-number", {
+            yPercent: 35, rotation: -5, ease: "none",
+            scrollTrigger: { trigger: ".manifesto", start: "top bottom", end: "bottom top", scrub: 1.5 },
+          });
+          gsap.from(".manifesto-copy > *", {
+            y: 42, opacity: 0, stagger: 0.08, ease: "power3.out",
+            scrollTrigger: { trigger: ".manifesto-copy", start: "top 88%", end: "top 48%", scrub: 0.9 },
+          });
+
+          gsap.to(".quote-left", {
+            xPercent: 10, yPercent: -10, rotation: -3, ease: "none",
+            scrollTrigger: { trigger: ".quote-stage", start: "top bottom", end: "bottom top", scrub: 1.4 },
+          });
+          gsap.to(".quote-right", {
+            xPercent: -10, yPercent: 8, rotation: 3, ease: "none",
+            scrollTrigger: { trigger: ".quote-stage", start: "top bottom", end: "bottom top", scrub: 1.6 },
+          });
+          gsap.from(".quote-center > *", {
+            y: 48, opacity: 0, stagger: 0.1, ease: "power3.out",
+            scrollTrigger: { trigger: ".quote-center", start: "top 88%", end: "top 50%", scrub: 0.9 },
+          });
+
+          // Horizontal archive becomes a touch carousel, while each card still
+          // participates in scroll-linked reveal/parallax.
+          gsap.utils.toArray<HTMLElement>(".archive-card").forEach((card, i) => {
+            const image = card.querySelector<HTMLImageElement>("img");
+            gsap.fromTo(card,
+              { y: i % 2 ? 28 : -28, opacity: 0.45, rotateZ: i % 2 ? 1.5 : -1.5 },
+              { y: 0, opacity: 1, rotateZ: 0, ease: "none",
+                scrollTrigger: { trigger: card, start: "left 110%", end: "right 30%", horizontal: true, scrub: 1 } }
+            );
+            if (image) {
+              gsap.to(image, {
+                xPercent: i % 2 ? -4 : 4, scale: 1.06, ease: "none",
+                scrollTrigger: { trigger: card, start: "left 100%", end: "right 0%", horizontal: true, scrub: 1.2 },
+              });
+            }
+          });
+
+          // The process stage remains pinned and its scene transitions are
+          // directly driven by vertical touch scroll.
           const mobileScenes = gsap.utils.toArray<HTMLElement>(".process-scene");
           if (mobileScenes.length > 1) {
             const mobileProcess = gsap.timeline({
@@ -373,49 +416,115 @@ export default function ScrollExperience() {
                 trigger: ".process-stage",
                 start: "top top",
                 end: "bottom bottom",
-                scrub: 0.9,
+                scrub: 1,
+                invalidateOnRefresh: true,
               },
             });
             mobileScenes.forEach((scene, i) => {
               if (i === 0) {
-                mobileProcess.to(scene, { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: "none" });
+                mobileProcess.to(scene, {
+                  opacity: 1, x: 0, y: 0, scale: 1,
+                  clipPath: "inset(0 0 0 0)", duration: 0.2, ease: "none",
+                });
               }
               if (i < mobileScenes.length - 1) {
                 mobileProcess.to(scene, {
-                  opacity: 0, y: -22, scale: 0.96,
-                  clipPath: "inset(0 0 12% 0)",
-                  duration: 0.45, ease: "power2.inOut",
+                  opacity: 0, x: "-4%", y: -18, scale: 0.96,
+                  clipPath: "inset(0 10% 10% 0)", duration: 0.45, ease: "power2.inOut",
                 });
                 mobileProcess.fromTo(
                   mobileScenes[i + 1],
-                  { opacity: 0, y: 28, scale: 1.04, clipPath: "inset(12% 0 0 0)" },
-                  { opacity: 1, y: 0, scale: 1, clipPath: "inset(0 0 0 0)", duration: 0.55, ease: "power2.out" },
+                  { opacity: 0, x: "7%", y: 24, scale: 1.04, clipPath: "inset(10% 0 0 10%)" },
+                  { opacity: 1, x: 0, y: 0, scale: 1, clipPath: "inset(0 0 0 0)", duration: 0.55, ease: "power2.out" },
+                  "<"
+                );
+                mobileProcess.to(
+                  ".process-progress span",
+                  { scaleX: (i + 1) / mobileScenes.length, duration: 0.35, ease: "none" },
                   "<"
                 );
               }
-              mobileProcess.to(
-                ".process-progress span",
-                { scaleX: (i + 1) / mobileScenes.length, duration: 0.35, ease: "none" },
-                "<"
-              );
             });
           }
 
-          gsap.utils.toArray<HTMLElement>(".manifesto-image, .manifesto-copy, .quote-center, .detail-card, .depth-copy, .studio-copy").forEach((el) => {
-            gsap.from(el, {
-              y: 45, opacity: 0, duration: 0.8, ease: "power3.out",
-              scrollTrigger: { trigger: el, start: "top 88%", once: true },
-            });
-          });
-          gsap.utils.toArray<HTMLElement>(".archive-card").forEach((card) => {
+          gsap.utils.toArray<HTMLElement>(".detail-card").forEach((card, i) => {
+            const image = card.querySelector<HTMLElement>(".detail-image");
             gsap.from(card, {
-              y: 35, opacity: 0, duration: 0.7,
-              scrollTrigger: { trigger: card, start: "top 90%", once: true },
+              y: 55 + i * 12, opacity: 0, rotate: i % 2 ? 1 : -1,
+              scrollTrigger: { trigger: card, start: "top 94%", end: "top 58%", scrub: 0.9 },
+            });
+            if (image) {
+              gsap.fromTo(image,
+                { clipPath: "inset(12% 0 12% 0)" },
+                { clipPath: "inset(0% 0 0% 0)", ease: "none",
+                  scrollTrigger: { trigger: card, start: "top 92%", end: "top 48%", scrub: 1 } }
+              );
+              const imageElement = image.querySelector<HTMLImageElement>("img");
+              if (imageElement) {
+                gsap.to(imageElement, {
+                  yPercent: -8, scale: 1.06, ease: "none",
+                  scrollTrigger: { trigger: card, start: "top bottom", end: "bottom top", scrub: 1.4 },
+                });
+              }
+            }
+          });
+
+          gsap.to(".depth-one", {
+            yPercent: -13, xPercent: -2, rotation: -2.5, ease: "none",
+            scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.5 },
+          });
+          gsap.to(".depth-two", {
+            yPercent: 9, xPercent: 2, rotation: 2.5, ease: "none",
+            scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.3 },
+          });
+          gsap.to(".depth-three", {
+            yPercent: -8, rotation: -1, ease: "none",
+            scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.8 },
+          });
+          gsap.from(".depth-copy > *", {
+            x: -38, opacity: 0, stagger: 0.08, ease: "power3.out",
+            scrollTrigger: { trigger: ".depth-copy", start: "top 88%", end: "top 50%", scrub: 0.9 },
+          });
+
+          gsap.utils.toArray<HTMLElement>(".style-item").forEach((item, i) => {
+            gsap.from(item, {
+              x: i % 2 ? 28 : -28, opacity: 0,
+              scrollTrigger: { trigger: item, start: "top 94%", end: "top 72%", scrub: 0.8 },
+            });
+            gsap.to(item.querySelector("h3"), {
+              x: i % 2 ? -6 : 6, ease: "none",
+              scrollTrigger: { trigger: item, start: "top bottom", end: "bottom top", scrub: 1.1 },
+            });
+            gsap.to(item.querySelector("b"), {
+              scaleX: 1, transformOrigin: "left center", ease: "none",
+              scrollTrigger: { trigger: item, start: "top 82%", end: "top 48%", scrub: 0.8 },
             });
           });
-          gsap.to(".final-ring", {
-            rotation: 90, ease: "none",
-            scrollTrigger: { trigger: ".final-mark", start: "top bottom", end: "bottom top", scrub: 2 },
+
+          gsap.to(".studio-frame img", {
+            yPercent: -9, scale: 1.08, ease: "none",
+            scrollTrigger: { trigger: ".studio-editorial", start: "top bottom", end: "bottom top", scrub: 1.6 },
+          });
+          gsap.to(".studio-frame strong", {
+            yPercent: -28, xPercent: -8, ease: "none",
+            scrollTrigger: { trigger: ".studio-editorial", start: "top bottom", end: "bottom top", scrub: 1.4 },
+          });
+          gsap.from(".studio-copy > *", {
+            y: 45, opacity: 0, stagger: 0.08, ease: "power3.out",
+            scrollTrigger: { trigger: ".studio-copy", start: "top 88%", end: "top 50%", scrub: 0.9 },
+          });
+
+          gsap.to(".final-ring:not(.final-ring-small)", {
+            rotation: 180, scale: 1.08, ease: "none",
+            scrollTrigger: { trigger: ".final-mark", start: "top bottom", end: "bottom top", scrub: 1.8 },
+          });
+          gsap.to(".final-ring-small", {
+            rotation: -240, scale: 0.9, ease: "none",
+            scrollTrigger: { trigger: ".final-mark", start: "top bottom", end: "bottom top", scrub: 2.1 },
+          });
+          gsap.from(".final-word", {
+            y: 65, opacity: 0, scale: 0.92,
+            scrollTrigger: { trigger: ".final-mark", start: "top 88%", end: "top 42%", scrub: 1 },
           });
         });
 
