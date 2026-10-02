@@ -5,7 +5,7 @@ const gallery = [
   { no:"01", title:"BLACK / GREY", tag:"PORTRAIT", image:"https://images.pexels.com/photos/13346118/pexels-photo-13346118.jpeg?auto=compress&cs=tinysrgb&w=2200" },
   { no:"02", title:"FINE LINE", tag:"PRECISION", image:"https://images.pexels.com/photos/11364054/pexels-photo-11364054.jpeg?auto=compress&cs=tinysrgb&w=2200" },
   { no:"03", title:"BLACKWORK", tag:"FORM", image:"https://images.pexels.com/photos/20267349/pexels-photo-20267349.jpeg?auto=compress&cs=tinysrgb&w=2200" },
-  { no:"04", title:"CUSTOM PIECE", tag:"SESSION", image:"https://images.pexels.com/photos/20339300/pexels-photo-20339300.jpeg?auto=compress&cs=tinysrgb&w=2200" },
+  { no:"04", title:"CUSTOM PIECE", tag:"SESSION", image:"https://images.pexels.com/photos/14242280/pexels-photo-14242280.jpeg?auto=compress&cs=tinysrgb&w=2200" },
   { no:"05", title:"THE MACHINE", tag:"CRAFT", image:"https://images.pexels.com/photos/34053888/pexels-photo-34053888.jpeg?auto=compress&cs=tinysrgb&w=2200" },
   { no:"06", title:"INK / DETAIL", tag:"PROCESS", image:"https://images.pexels.com/photos/6593455/pexels-photo-6593455.jpeg?auto=compress&cs=tinysrgb&w=2200" },
   { no:"07", title:"THE ARTIST", tag:"FOCUS", image:"https://images.pexels.com/photos/18875613/pexels-photo-18875613.jpeg?auto=compress&cs=tinysrgb&w=2200" },
@@ -14,9 +14,9 @@ const gallery = [
 const styles = ["REALISM","BLACK & GREY","FINE LINE","BLACKWORK","NEO TRADITIONAL","GEOMETRIC"];
 
 const details = [
-  ["01","THE LINE","https://images.pexels.com/photos/1433270/pexels-photo-1433270.jpeg?auto=compress&cs=tinysrgb&w=1600"],
-  ["02","THE NEEDLE","https://images.pexels.com/photos/6593455/pexels-photo-6593455.jpeg?auto=compress&cs=tinysrgb&w=1600"],
-  ["03","THE CRAFT","https://images.pexels.com/photos/35645876/pexels-photo-35645876.jpeg?auto=compress&cs=tinysrgb&w=1600"],
+  ["01","THE LINE","https://images.pexels.com/photos/20509829/pexels-photo-20509829.jpeg?auto=compress&cs=tinysrgb&w=1600"],
+  ["02","THE NEEDLE","https://images.pexels.com/photos/7147775/pexels-photo-7147775.jpeg?auto=compress&cs=tinysrgb&w=1600"],
+  ["03","THE CRAFT","https://images.pexels.com/photos/4798434/pexels-photo-4798434.jpeg?auto=compress&cs=tinysrgb&w=1600"],
 ];
 
 export default function Home() {
@@ -140,8 +140,8 @@ export default function Home() {
         </div>
         <div className="depth-stack">
           <div className="depth-photo depth-one"><img src="https://images.pexels.com/photos/11364054/pexels-photo-11364054.jpeg?auto=compress&cs=tinysrgb&w=1800" alt="Close-up tattoo work" /></div>
-          <div className="depth-photo depth-two"><img src="https://images.pexels.com/photos/25491866/pexels-photo-25491866.jpeg?auto=compress&cs=tinysrgb&w=1800" alt="Tattoo artist at work" /></div>
-          <div className="depth-photo depth-three"><img src="https://images.pexels.com/photos/34053888/pexels-photo-34053888.jpeg?auto=compress&cs=tinysrgb&w=1800" alt="Tattoo session in studio" /></div>
+          <div className="depth-photo depth-two"><img src="https://images.pexels.com/photos/13346106/pexels-photo-13346106.jpeg?auto=compress&cs=tinysrgb&w=1800" alt="Tattoo artist at work" /></div>
+          <div className="depth-photo depth-three"><img src="https://images.pexels.com/photos/5088485/pexels-photo-5088485.jpeg?auto=compress&cs=tinysrgb&w=1800" alt="Tattoo session in studio" /></div>
         </div>
       </section>
 
