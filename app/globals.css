@@ -178,3 +178,37 @@ html.lenis.lenis-stopped{overflow:hidden}
   .final-logo{width:min(48vw,220px)}
   .final-logo-image{opacity:.6}
 }
+
+/* --- Synced scroll v3: pinned-stage geometry --- */
+.horizontal-stage,
+.process-stage{position:relative;overflow:visible!important}
+.horizontal-viewport,
+.process-sticky{
+  width:100%;
+  will-change:auto!important;
+  transform:none!important;
+}
+.process-scenes{
+  position:relative;
+  overflow:hidden;
+  perspective:1200px;
+}
+.process-scene{
+  position:absolute!important;
+  inset:0;
+  backface-visibility:hidden;
+  transform-style:preserve-3d;
+}
+@media(min-width:801px){
+  .horizontal-stage{height:560vh!important}
+  .horizontal-viewport{height:100svh!important}
+  .horizontal-track{min-width:max-content}
+  .process-stage{height:460vh!important}
+  .process-sticky{height:100svh!important}
+}
+@media(max-width:800px){
+  .horizontal-stage{height:auto!important}
+  .horizontal-viewport{height:auto!important;position:relative!important}
+  .process-stage{height:430vh!important}
+  .process-sticky{height:100dvh!important}
+}
