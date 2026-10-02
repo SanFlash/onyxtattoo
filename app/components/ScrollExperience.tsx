@@ -397,12 +397,12 @@ export default function ScrollExperience() {
             gsap.fromTo(card,
               { y: i % 2 ? 28 : -28, opacity: 0.45, rotateZ: i % 2 ? 1.5 : -1.5 },
               { y: 0, opacity: 1, rotateZ: 0, ease: "none",
-                scrollTrigger: { trigger: card, start: "left 110%", end: "right 30%", horizontal: true, scrub: 1 } }
+                scrollTrigger: { trigger: card, scroller: ".horizontal-track", horizontal: true, start: "left 92%", end: "left 42%", scrub: 1 } }
             );
             if (image) {
               gsap.to(image, {
                 xPercent: i % 2 ? -4 : 4, scale: 1.06, ease: "none",
-                scrollTrigger: { trigger: card, start: "left 100%", end: "right 0%", horizontal: true, scrub: 1.2 },
+                scrollTrigger: { trigger: card, scroller: ".horizontal-track", horizontal: true, start: "left 105%", end: "right -5%", scrub: 1.2 },
               });
             }
           });
