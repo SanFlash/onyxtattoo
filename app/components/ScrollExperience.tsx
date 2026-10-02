@@ -175,8 +175,18 @@ export default function ScrollExperience() {
             `step-${processScenes.length - 1}-in+=0.62`
           );
           ScrollTrigger.create({
-            animation: processTimeline, trigger: ".process-stage",
-            start: "top top", end: "bottom bottom", scrub: true, invalidateOnRefresh: true,
+            animation: processTimeline,
+            trigger: ".process-stage",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: isTouch ? 0.55 : 0.35,
+            snap: isTouch ? false : {
+              snapTo: "labels",
+              duration: { min: 0.12, max: 0.45 },
+              delay: 0.08,
+              ease: "power2.inOut",
+            },
+            invalidateOnRefresh: true,
           });
         }
         mm.add("(min-width: 801px)", () => {
@@ -453,6 +463,96 @@ export default function ScrollExperience() {
             scrollTrigger: { trigger: ".final-mark", start: "top 88%", end: "top 42%", scrub: 1 },
           });
         });
+
+        // Cinematic chapter choreography inspired by editorial/Webflow-style
+        // scroll storytelling: clipped entrances, layered depth, and deliberate
+        // section rhythm without moving the document's layout geometry.
+        const chapterReveals = [
+          ".detail-heading",
+          ".style-index-head",
+          ".studio-copy",
+          ".footer-brand",
+        ];
+        chapterReveals.forEach((selector, index) => {
+          const nodes = gsap.utils.toArray<HTMLElement>(selector);
+          nodes.forEach((node) => {
+            gsap.fromTo(node,
+              { y: 48, opacity: 0, clipPath: "inset(0 0 14% 0)" },
+              { y: 0, opacity: 1, clipPath: "inset(0)", ease: "power3.out",
+                scrollTrigger: {
+                  trigger: node,
+                  start: "top 92%",
+                  end: "top 58%",
+                  scrub: isTouch ? 0.75 : 0.5,
+                  invalidateOnRefresh: true,
+                }
+              }
+            );
+          });
+        });
+
+        // Headline masks: the large editorial words reveal as if they are being
+        // pulled through a viewport rather than simply fading in.
+        gsap.utils.toArray<HTMLElement>(".manifesto-copy h2, .quote-center h2, .depth-copy h2, .studio-copy h2, .final-word").forEach((node) => {
+          gsap.fromTo(node,
+            { yPercent: 16, clipPath: "inset(12% 0 12% 0)", opacity: 0.25 },
+            { yPercent: 0, clipPath: "inset(0)", opacity: 1, ease: "none",
+              scrollTrigger: {
+                trigger: node,
+                start: "top 88%",
+                end: "top 38%",
+                scrub: isTouch ? 0.85 : 0.6,
+                invalidateOnRefresh: true,
+              }
+            }
+          );
+        });
+
+        // Small editorial details get a slower counter-motion to create the
+        // layered depth seen in premium agency/portfolio scroll experiences.
+        gsap.utils.toArray<HTMLElement>(".archive-caption, .scene-label, .scene-no, .depth-stat, .studio-tags").forEach((node, index) => {
+          gsap.fromTo(node,
+            { y: index % 2 ? 18 : -14, opacity: 0.25 },
+            { y: 0, opacity: 1, ease: "none",
+              scrollTrigger: {
+                trigger: node,
+                start: "top 92%",
+                end: "top 52%",
+                scrub: isTouch ? 0.9 : 0.65,
+                invalidateOnRefresh: true,
+              }
+            }
+          );
+        });
+
+        // Footer becomes a final slow reveal instead of appearing abruptly after
+        // the CTA, giving the page a complete beginning-to-end motion arc.
+        gsap.from(".footer > *", {
+          y: 30, opacity: 0, stagger: 0.08, ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".footer",
+            start: "top 94%",
+            end: "top 65%",
+            scrub: isTouch ? 0.8 : 0.55,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        // Drive a very subtle velocity response into the archive and depth
+        // imagery. It uses a CSS custom property so it never fights the
+        // ScrollTrigger transforms already controlling those elements.
+        const velocityTargets = gsap.utils.toArray<HTMLElement>(".archive-card, .depth-photo, .quote-word");
+        const velocityTo = velocityTargets.map((node) =>
+          gsap.quickTo(node, "--scroll-velocity", {
+            duration: isTouch ? 0.28 : 0.2,
+            ease: "power3.out",
+          })
+        );
+        const velocityHandler = (event: { velocity?: number }) => {
+          const velocity = Math.max(-1, Math.min(1, (event.velocity || 0) / 2.5));
+          velocityTo.forEach((setter) => setter(velocity.toFixed(3)));
+        };
+        activeLenis.on("scroll", velocityHandler);
 
         const magneticNodes = gsap.utils.toArray<HTMLElement>(".magnetic");
         magneticNodes.forEach((node) => {
