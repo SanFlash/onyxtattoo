@@ -166,7 +166,12 @@ export default function Home() {
       </section>
 
       <section className="final-mark">
-        <div className="final-noise" /><div className="final-ring" /><div className="final-ring final-ring-small" />
+        <div className="final-noise" />
+        <div className="final-ring" />
+        <div className="final-ring final-ring-small" />
+        <div className="final-logo" aria-hidden="true">
+          <img className="final-logo-image" src="/brand/onxy-logo.png" alt="" />
+        </div>
         <div className="final-word"><span>MAKE</span> <em>YOUR</em><br /><span>MARK.</span></div>
         <Link href="/booking" className="book-button magnetic">BOOK A SESSION <span>↗</span></Link><p>INK. ART. IDENTITY.</p>
       </section>
