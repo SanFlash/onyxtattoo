@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function NotFound(){return <main className="error-page"><span>404</span><h1>THIS PAGE<br/><em>DOESN'T EXIST.</em></h1><p>But your next tattoo could.</p><Link className="re-btn re-btn-fill" href="/">RETURN TO ONYX ↗</Link></main>}
