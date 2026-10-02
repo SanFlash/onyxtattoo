@@ -142,14 +142,14 @@ export default function ScrollExperience() {
           gsap.to(ticker, { xPercent: -28, duration: 22, repeat: -1, ease: "none" });
         }
 
-        mm.add("(min-width: 801px)", () => {
+        mm.add("(min-width: 1101px)", () => {
           gsap.to(".hero-photo-inner", {
             scale: 1.18, yPercent: -8, xPercent: 4, ease: "none",
             scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.6 },
           });
           gsap.to(".hero-copy", {
             yPercent: -16, opacity: 0.35, ease: "none",
-            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.2 },
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.1 },
           });
           gsap.to(".hero-orbit.orbit-one", {
             rotation: 120, xPercent: -12, ease: "none",
@@ -161,8 +161,8 @@ export default function ScrollExperience() {
           });
 
           gsap.fromTo(".manifesto-image",
-            { clipPath: "inset(18% 0 18% 0)", scale: 0.92 },
-            { clipPath: "inset(0% 0 0% 0)", scale: 1, ease: "none",
+            { clipPath: "inset(18% 9% 18% 0)", scale: 0.9, xPercent: -4 },
+            { clipPath: "inset(0)", scale: 1, xPercent: 0, ease: "none",
               scrollTrigger: { trigger: ".manifesto", start: "top 80%", end: "top 25%", scrub: 1.1 } }
           );
           gsap.to(".manifesto-image img", {
@@ -174,8 +174,8 @@ export default function ScrollExperience() {
             scrollTrigger: { trigger: ".manifesto-copy", start: "top 80%", end: "top 42%", scrub: 1 },
           });
           gsap.to(".manifesto-number", {
-            yPercent: 60, rotation: -8, ease: "none",
-            scrollTrigger: { trigger: ".manifesto", start: "top bottom", end: "bottom top", scrub: 1.8 },
+            yPercent: 80, rotation: -9, ease: "none",
+            scrollTrigger: { trigger: ".manifesto", start: "top bottom", end: "bottom top", scrub: 1.6 },
           });
 
           gsap.to(".quote-left", {
@@ -194,7 +194,7 @@ export default function ScrollExperience() {
           // Desktop pinned horizontal archive.
           const track = document.querySelector<HTMLElement>(".horizontal-track");
           if (track) {
-            const getDistance = () => Math.max(0, track.scrollWidth - window.innerWidth + window.innerWidth * 0.12);
+            const getDistance = () => Math.max(0, track.scrollWidth - window.innerWidth + window.innerWidth * 0.08);
             const horizontalTween = gsap.to(track, {
               x: () => -getDistance(),
               ease: "none",
@@ -202,7 +202,7 @@ export default function ScrollExperience() {
                 trigger: ".horizontal-stage",
                 start: "top top",
                 end: "bottom bottom",
-                scrub: 1.05,
+                scrub: 1,
                 invalidateOnRefresh: true,
               },
             });
@@ -222,7 +222,7 @@ export default function ScrollExperience() {
               if (image) {
                 gsap.to(image, {
                   xPercent: i % 2 ? -7 : 7, scale: 1.12, ease: "none",
-                  scrollTrigger: { trigger: card, containerAnimation: horizontalTween, start: "left 105%", end: "right -5%", scrub: 1.2 },
+                  scrollTrigger: { trigger: card, containerAnimation: horizontalTween, start: "left 105%", end: "right -5%", scrub: 1.1 },
                 });
               }
             });
@@ -231,7 +231,7 @@ export default function ScrollExperience() {
           // Sticky process scenes.
           const scenes = gsap.utils.toArray<HTMLElement>(".process-scene");
           const processTl = gsap.timeline({
-            scrollTrigger: { trigger: ".process-stage", start: "top top", end: "bottom bottom", scrub: 1.05 },
+            scrollTrigger: { trigger: ".process-stage", start: "top top", end: "bottom bottom", scrub: 1 },
           });
           scenes.forEach((scene, i) => {
             processTl.to(scene, {
@@ -274,7 +274,7 @@ export default function ScrollExperience() {
             }
           });
 
-          gsap.to(".depth-one", { yPercent: -16, rotation: -3, ease: "none", scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.8 } });
+          gsap.to(".depth-one", { yPercent: -16, rotation: -3, ease: "none", scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.6 } });
           gsap.to(".depth-two", { yPercent: 10, rotation: 3, ease: "none", scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.3 } });
           gsap.to(".depth-three", { yPercent: -22, rotation: -1, ease: "none", scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 2.2 } });
           gsap.from(".depth-copy > *", {
@@ -312,7 +312,7 @@ export default function ScrollExperience() {
 
           gsap.to(".studio-frame img", {
             yPercent: -10, scale: 1.1, ease: "none",
-            scrollTrigger: { trigger: ".studio-editorial", start: "top bottom", end: "bottom top", scrub: 1.8 },
+            scrollTrigger: { trigger: ".studio-editorial", start: "top bottom", end: "bottom top", scrub: 1.6 },
           });
           gsap.to(".studio-frame strong", {
             yPercent: -40, xPercent: -15, ease: "none",
@@ -325,7 +325,7 @@ export default function ScrollExperience() {
 
           gsap.to(".final-ring:not(.final-ring-small)", {
             rotation: 180, scale: 1.12, ease: "none",
-            scrollTrigger: { trigger: ".final-mark", start: "top bottom", end: "bottom top", scrub: 1.8 },
+            scrollTrigger: { trigger: ".final-mark", start: "top bottom", end: "bottom top", scrub: 1.6 },
           });
           gsap.to(".final-ring-small", {
             rotation: -240, scale: 0.88, ease: "none",
@@ -344,7 +344,7 @@ export default function ScrollExperience() {
 
           gsap.to(".hero-photo-inner", {
             scale: 1.12, yPercent: -7, xPercent: 2, ease: "none",
-            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.2 },
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.1 },
           });
           gsap.to(".hero-copy", {
             yPercent: -9, opacity: 0.72, ease: "none",
@@ -352,7 +352,7 @@ export default function ScrollExperience() {
           });
           gsap.to(".hero-brand", {
             yPercent: -45, opacity: 0.45, ease: "none",
-            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.2 },
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.1 },
           });
           gsap.to(".hero-side", {
             yPercent: -30, ease: "none",
@@ -402,7 +402,7 @@ export default function ScrollExperience() {
             if (image) {
               gsap.to(image, {
                 xPercent: i % 2 ? -4 : 4, scale: 1.06, ease: "none",
-                scrollTrigger: { trigger: card, scroller: ".horizontal-track", horizontal: true, start: "left 105%", end: "right -5%", scrub: 1.2 },
+                scrollTrigger: { trigger: card, scroller: ".horizontal-track", horizontal: true, start: "left 105%", end: "right -5%", scrub: 1.1 },
               });
             }
           });
@@ -479,7 +479,7 @@ export default function ScrollExperience() {
           });
           gsap.to(".depth-three", {
             yPercent: -8, rotation: -1, ease: "none",
-            scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.8 },
+            scrollTrigger: { trigger: ".depth-gallery", start: "top bottom", end: "bottom top", scrub: 1.6 },
           });
           gsap.from(".depth-copy > *", {
             x: -38, opacity: 0, stagger: 0.08, ease: "power3.out",
@@ -516,7 +516,7 @@ export default function ScrollExperience() {
 
           gsap.to(".final-ring:not(.final-ring-small)", {
             rotation: 180, scale: 1.08, ease: "none",
-            scrollTrigger: { trigger: ".final-mark", start: "top bottom", end: "bottom top", scrub: 1.8 },
+            scrollTrigger: { trigger: ".final-mark", start: "top bottom", end: "bottom top", scrub: 1.6 },
           });
           gsap.to(".final-ring-small", {
             rotation: -240, scale: 0.9, ease: "none",
